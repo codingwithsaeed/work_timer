@@ -37,57 +37,50 @@ class MonthListScreen extends StatelessWidget {
             ? const Center(child: CircularProgressIndicator())
             : store.months.isEmpty
                 ? const Center(child: Text('No months'))
-                : GridView.builder(
-                    padding: const EdgeInsets.all(Dimens.mPadding),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: Dimens.mPadding,
-                      crossAxisSpacing: Dimens.mPadding,
-                    ),
-                    itemBuilder: (_, index) {
-                      final month = store.months[index];
-                      return MonthItem(
-                        name: month.name,
-                        onTap: () {
-                          store.setCurrentMonth(month);
-                          context.pushNamed(Routes.monthDays);
-                        },
-                      );
-                    },
-                    itemCount: store.months.length,
-                  ),
+                : Observer(builder: (_) {
+                    return ListView.separated(
+                      separatorBuilder: (context, index) => const SizedBox(height: Dimens.mPadding),
+                      padding: const EdgeInsets.all(Dimens.mPadding),
+                      itemBuilder: (_, index) {
+                        final month = store.months[index];
+                        return MonthItem(
+                          month: month,
+                          onTap: () {
+                            store.setCurrentMonth(month);
+                            context.pushNamed(Routes.monthDays);
+                          },
+                          onDelete: () => store.deleteMonth(month),
+                        );
+                      },
+                      itemCount: store.months.length,
+                    );
+                  }),
       );
     });
   }
 }
 
 class MonthItem extends StatelessWidget {
-  final String name;
+  final Month month;
   final VoidCallback? onTap;
-  const MonthItem({Key? key, required this.name, this.onTap}) : super(key: key);
+  final VoidCallback? onDelete;
+
+  const MonthItem({Key? key, required this.month, this.onTap, this.onDelete}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return ListTile(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.primaryContainerColor,
-          borderRadius: BorderRadius.circular(Dimens.sPadding),
-          border: Border.all(color: context.outlineColor),
-        ),
-        padding: const EdgeInsets.all(Dimens.mPadding),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Icon(Icons.calendar_month_rounded,
-                size: Dimens.xlIconSize + Dimens.mIconSize, color: context.primaryColor),
-            const SizedBox(height: Dimens.sPadding),
-            XText(name, align: TextAlign.center, style: context.titleMedium),
-          ],
-        ),
+      tileColor: context.primaryContainerColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.sPadding),
+        side: BorderSide(color: context.outlineColor),
       ),
+      title: XText(month.name, style: context.titleMedium),
+      subtitle: XText('Duty: ${month.dutyHours} hours'),
+      leading: Icon(Icons.calendar_month_rounded, color: context.outlineColor),
+      trailing:
+          IconButton(onPressed: onDelete, icon: Icon(Icons.delete, color: context.errorColor)),
     );
   }
 }

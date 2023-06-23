@@ -60,8 +60,13 @@ class CreateMonthDialog extends StatelessWidget {
                   text: 'Save',
                 );
               }),
-              const SizedBox(height: Dimens.mPadding),
-              XTextButton(onTap: () => context.pop(), text: 'Cancel'),
+              const SizedBox(height: Dimens.sPadding),
+              XTextButton(
+                onTap: () => context.pop(),
+                color: context.backgroundColor,
+                borderColor: context.outlineColor,
+                text: 'Cancel',
+              ),
             ],
           );
         },
