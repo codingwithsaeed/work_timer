@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/extensions.dart';
 import '../../utils/dimens.dart';
 import '../../utils/routes.dart';
+import '../../utils/x_widgets/x_text.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -19,9 +21,11 @@ class SplashScreen extends StatelessWidget {
       body: Stack(
         children: [
           Center(
-            child: Text(
+            child: XText(
               'Work Timer',
-              style: context.titleLarge.copyWith(color: context.onPrimaryColor),
+              color: context.onPrimaryColor,
+              style: context.titleLarge.copyWith(fontWeight: FontWeight.w900),
+              size: 35.sp,
             ),
           ),
           Padding(
