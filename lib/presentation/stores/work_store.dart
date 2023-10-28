@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
+import 'package:work_timer/db/entities/time.dart';
 import '../../db/entities/month.dart';
 import '../../db/entities/work_day.dart';
 import '../../repository/work_repository.dart';
@@ -22,7 +23,10 @@ abstract class _WorkStoreBase with Store {
 
   ObservableList<Month> months = ObservableList();
   @action
-  void setMonths(List<Month> months) => this.months = ObservableList.of(months);
+  void setMonths(List<Month> months) {
+    this.months.clear();
+    this.months.addAll(months);
+  }
 
   @observable
   ObservableList<WorkDay> workDays = ObservableList();
@@ -33,6 +37,22 @@ abstract class _WorkStoreBase with Store {
   Month? currentMonth;
   @action
   void setCurrentMonth(Month? currentMonth) => this.currentMonth = currentMonth;
+
+  @computed
+  Time get totalTime {
+    Time time = const Time(hour: '0', minute: '0');
+    for (final day in workDays) {
+      time = time.add(day.exit.differenceWith(day.arrival));
+    }
+    return time;
+  }
+
+  @computed
+  double get progressValue {
+    print('totalTime: ${totalTime.toHour}');
+    print('currentMonth: ${currentMonth!.dutyHours.time}');
+    return double.parse(totalTime.toHour.percentOf(currentMonth!.dutyHours.time));
+  }
 
   Future<void> getMonths() async {
     setLoading(true);

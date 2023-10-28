@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:work_timer/db/entities/time.dart';
 import 'package:work_timer/presentation/screens/dialogs/create_day_dialog.dart';
+import 'package:work_timer/utils/x_widgets/x_text.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/extensions.dart';
 import '../../db/entities/work_day.dart';
@@ -20,6 +22,10 @@ class MonthDaysScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(store.currentMonth!.name),
           centerTitle: true,
+          leading: IconButton(
+            onPressed: () => context.pop(),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
@@ -36,17 +42,31 @@ class MonthDaysScreen extends StatelessWidget {
             : store.workDays.isEmpty
                 ? const Center(child: Text('No work days'))
                 : Observer(builder: (_) {
-                    return ListView.separated(
-                        padding: const EdgeInsets.all(Dimens.mPadding),
-                        itemCount: store.workDays.length,
-                        separatorBuilder: (_, index) => const SizedBox(height: Dimens.mPadding),
-                        itemBuilder: (_, index) {
-                          final workDay = store.workDays[index];
-                          return WorkDayItem(
-                            workDay: workDay,
-                            onDelete: () => store.deleteWorkDay(workDay),
-                          );
-                        });
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            XText(store.totalTime.toString()),
+                            Observer(builder: (_) {
+                              return LinearProgressIndicator(value: store.progressValue);
+                            }),
+                            XText(store.currentMonth!.dutyHours.time.toString()),
+                          ],
+                        ),
+                        ListView.separated(
+                            padding: const EdgeInsets.all(Dimens.mPadding),
+                            itemCount: store.workDays.length,
+                            shrinkWrap: true,
+                            separatorBuilder: (_, index) => const SizedBox(height: Dimens.mPadding),
+                            itemBuilder: (_, index) {
+                              final workDay = store.workDays[index];
+                              return WorkDayItem(
+                                workDay: workDay,
+                                onDelete: () => store.deleteWorkDay(workDay),
+                              );
+                            }),
+                      ],
+                    );
                   }),
       );
     });
