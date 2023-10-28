@@ -18,7 +18,6 @@ extension HowLong on Time {
   Time differenceWith(Time other) => (inMinutes - other.inMinutes).minuteToTime;
 
   double percentOf(Time other) {
-    print(double.parse((inMinutes / other.inMinutes).toStringAsFixed(2)));
     return double.parse((inMinutes / other.inMinutes).toStringAsFixed(2));
   }
 
