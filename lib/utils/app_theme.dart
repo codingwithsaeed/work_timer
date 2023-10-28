@@ -73,7 +73,7 @@ ColorScheme createScheme(Color primary, {Color? secondary, Color? error}) {
     secondary: secondary ?? AppColors.amber,
     background: AppColors.background,
     primaryContainer: AppColors.white,
-    error: AppColors.rufous,
+    error: AppColors.errorRed,
     outline: AppColors.outline,
     surface: AppColors.border,
     scrim: AppColors.icon,
