@@ -1,5 +1,6 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
+import 'package:work_timer/utils/dimens.dart';
 import 'app_colors.dart';
 
 // void changeStatusBarColor(BuildContext context) {
@@ -29,6 +30,11 @@ ThemeData getTheme(ThemeScheme theme, {bool isRtl = false}) {
         elevation: 3,
         backgroundColor: scheme?.primary,
         foregroundColor: scheme?.onPrimary,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          bottomRight: Radius.circular(Dimens.sPadding),
+          bottomLeft: Radius.circular(Dimens.sPadding),
+        )),
         titleTextStyle: titleLarge.copyWith(
           color: scheme?.onPrimary,
           fontSize: 22,

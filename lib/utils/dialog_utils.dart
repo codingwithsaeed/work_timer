@@ -18,7 +18,7 @@ abstract final class DialogUtils {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        contentPadding: const EdgeInsets.all(Dimens.mPadding).only(top: Dimens.zero),
+        contentPadding: const EdgeInsets.all(Dimens.sPadding).only(top: Dimens.zero),
         //insetPadding: const EdgeInsets.symmetric(horizontal: Dimens.padding),
         actionsPadding: const EdgeInsets.symmetric(
           horizontal: Dimens.sPadding,
@@ -31,8 +31,7 @@ abstract final class DialogUtils {
         title: Row(
           children: [
             const SizedBox(width: Dimens.sPadding),
-            Text(title, style: context.titleSmall.copyWith(overflow: TextOverflow.ellipsis))
-                .expand()
+            Text(title, style: context.titleSmall.copyWith(overflow: TextOverflow.ellipsis)).expand()
           ],
         ),
         content: Expanded(
@@ -71,7 +70,7 @@ abstract final class DialogUtils {
       builder: (context) {
         return Container(
           margin: context.mediaQuery.viewInsets,
-          padding: const EdgeInsets.all(Dimens.mPadding).only(top: Dimens.zero),
+          padding: const EdgeInsets.all(Dimens.sPadding).only(top: Dimens.zero),
           decoration: BoxDecoration(
               color: context.primaryContainerColor,
               borderRadius: const BorderRadius.only(

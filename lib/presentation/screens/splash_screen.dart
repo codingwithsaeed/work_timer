@@ -11,18 +11,17 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () {
         context.pushReplacementNamed(Routes.monthList);
       });
     });
-
     return Scaffold(
       backgroundColor: context.primaryColor,
       body: Stack(
         children: [
           Center(
             child: XText(
-              'Work Timer',
+              'TimeSheet',
               color: context.onPrimaryColor,
               style: context.titleLarge.copyWith(fontWeight: FontWeight.w900),
               size: 35.sp,

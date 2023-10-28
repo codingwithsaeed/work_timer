@@ -38,7 +38,7 @@ abstract class _CreateDayStoreBase with Store {
   @computed
   String get arrivalText {
     if (arrival == null) return 'Select arrival';
-    return arrival!.toString();
+    return arrival!.padLeft().toString();
   }
 
   @observable
@@ -49,7 +49,7 @@ abstract class _CreateDayStoreBase with Store {
   @computed
   String get exitText {
     if (exit == null) return 'Select exit';
-    return exit!.toString();
+    return exit!.padLeft().toString();
   }
 
   @observable
@@ -61,9 +61,8 @@ abstract class _CreateDayStoreBase with Store {
   bool get isValid => date != null && arrival != null && exit != null;
 
   @computed
-  WorkDay? get workDay => isValid
-      ? WorkDay(date: date!, arrival: arrival!, exit: exit!, isRemote: isRemote, monthId: monthId)
-      : null;
+  WorkDay? get workDay =>
+      isValid ? WorkDay(date: date!, arrival: arrival!, exit: exit!, isRemote: isRemote, monthId: monthId) : null;
 }
 
 class CreateDayDialog extends StatelessWidget {
@@ -132,7 +131,7 @@ class CreateDayDialog extends StatelessWidget {
                 }).expand(),
               ],
             ),
-            const SizedBox(height: Dimens.mPadding),
+            const SizedBox(height: Dimens.sPadding),
             Observer(builder: (_) {
               return XTextButton(
                 onTap: store.isValid ? () => context.pop<WorkDay>(store.workDay) : null,

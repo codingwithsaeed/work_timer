@@ -13,37 +13,36 @@ class Time extends Equatable {
 }
 
 extension HowLong on Time {
-  Time differenceWith(Time other) {
-    return Time(
-      hour: (int.parse(hour) - int.parse(other.hour)).toString(),
-      minute: (int.parse(minute) - int.parse(other.minute)).toString(),
-    );
-  }
+  num get inMinutes => num.parse(hour) * 60 + num.parse(minute);
 
-  Time get toHour {
-    return Time(
-      hour: (int.parse(hour) + (int.parse(minute) / 60)).toStringAsFixed(1),
-      minute: '0',
-    );
-  }
+  Time differenceWith(Time other) => (inMinutes - other.inMinutes).minuteToTime;
 
-  String percentOf(Time other) {
-    return ((double.parse(toHour.hour) / double.parse(other.hour)) / 100).toStringAsFixed(1);
+  double percentOf(Time other) {
+    print(double.parse((inMinutes / other.inMinutes).toStringAsFixed(2)));
+    return double.parse((inMinutes / other.inMinutes).toStringAsFixed(2));
   }
 
   Time add(Time other) {
+    final res = inMinutes + other.inMinutes;
+    return res.minuteToTime;
+  }
+
+  Time padLeft({int length = 2, String char = '0'}) {
     return Time(
-      hour: (int.parse(hour) + int.parse(other.hour)).toString(),
-      minute: (int.parse(minute) + int.parse(other.minute)).toString(),
+      hour: hour.padLeft(length, char),
+      minute: minute.padLeft(length, char),
     );
   }
 }
 
 extension ToTime on int {
-  Time get time {
-    return Time(
-      hour: toString(),
-      minute: '0',
-    );
+  Time get time => Time(hour: toString(), minute: '00').padLeft();
+}
+
+extension ToTimeFromNum on num {
+  Time get minuteToTime {
+    final hours = (this / 60).floor();
+    final minutes = (this % 60).floor();
+    return Time(hour: hours.toString(), minute: minutes.toString()).padLeft();
   }
 }

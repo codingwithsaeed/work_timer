@@ -19,7 +19,7 @@ class MonthListScreen extends StatelessWidget {
     return Observer(builder: (_) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('WorkDays App'),
+          title: const Text('TimeSheet'),
           automaticallyImplyLeading: false,
           centerTitle: true,
         ),
@@ -71,6 +71,9 @@ class MonthItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      contentPadding: const EdgeInsets.only(left: Dimens.mPadding),
       tileColor: context.primaryContainerColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.sPadding),
@@ -79,8 +82,7 @@ class MonthItem extends StatelessWidget {
       title: XText(month.name, style: context.titleMedium),
       subtitle: XText('Duty: ${month.dutyHours} hours'),
       leading: Icon(Icons.calendar_month_rounded, color: context.outlineColor),
-      trailing:
-          IconButton(onPressed: onDelete, icon: Icon(Icons.delete, color: context.errorColor)),
+      trailing: IconButton(onPressed: onDelete, icon: Icon(Icons.delete, color: context.errorColor)),
     );
   }
 }

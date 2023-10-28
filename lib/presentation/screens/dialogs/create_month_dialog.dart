@@ -53,7 +53,7 @@ class CreateMonthDialog extends StatelessWidget {
                 inputAction: TextInputAction.done,
                 onChanged: (dutyHours) => store.setDutyHours(dutyHours),
               ),
-              const SizedBox(height: Dimens.mPadding),
+              const SizedBox(height: Dimens.sPadding),
               Observer(builder: (_) {
                 return XTextButton(
                   onTap: store.isValid ? () => context.pop(store.month) : null,

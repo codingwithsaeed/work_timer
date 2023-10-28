@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:work_timer/db/entities/time.dart';
@@ -33,6 +34,9 @@ abstract class _WorkStoreBase with Store {
   @action
   void setWorkDays(List<WorkDay> workDays) => this.workDays = ObservableList.of(workDays);
 
+  @computed
+  List<WorkDay> get sortedByDate => workDays.toList()..sort((a, b) => a.date.compareTo(b.date));
+
   @observable
   Month? currentMonth;
   @action
@@ -40,18 +44,34 @@ abstract class _WorkStoreBase with Store {
 
   @computed
   Time get totalTime {
-    Time time = const Time(hour: '0', minute: '0');
+    Time time = const Time(hour: '0', minute: '00');
     for (final day in workDays) {
       time = time.add(day.exit.differenceWith(day.arrival));
     }
-    return time;
+    return time.padLeft();
+  }
+
+  @computed
+  Time get remainingTime {
+    return currentMonth!.dutyHours.time.differenceWith(totalTime);
   }
 
   @computed
   double get progressValue {
-    print('totalTime: ${totalTime.toHour}');
-    print('currentMonth: ${currentMonth!.dutyHours.time}');
-    return double.parse(totalTime.toHour.percentOf(currentMonth!.dutyHours.time));
+    return totalTime.percentOf(currentMonth!.dutyHours.time);
+  }
+
+  @computed
+  String get progressText {
+    final percent = (progressValue * 100).toStringAsFixed(1);
+    return '$percent %';
+  }
+
+  @computed
+  Color get progressColor {
+    if (progressValue < 0.3) return Colors.red;
+    if (progressValue < 0.6) return Colors.orange;
+    return Colors.green;
   }
 
   Future<void> getMonths() async {
