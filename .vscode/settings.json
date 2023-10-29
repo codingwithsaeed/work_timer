@@ -1,0 +1,23 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    ".dart_tool": false,
+    ".flutter-plugins": true,
+    ".flutter-plugins-dependencies": true,
+    ".fvm": true,
+    ".idea": true,
+    ".metadata": true,
+    ".vscode": true,
+    "**/.gitkeep": false,
+    "**/*.config.dart": true,
+    "**/*.freezed.dart": false,
+    "**/*.g.dart": true,
+    "pubspec.lock": true
+  },
+  "explorerExclude.backup": {}
+}

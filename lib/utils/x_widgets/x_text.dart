@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import '../extensions.dart';
 import '../dimens.dart';
+
 class XText extends StatelessWidget {
   final String title;
   final Color? color;
   final double? size;
   final TextAlign? align;
   final TextStyle? style;
+  final TextDirection? direction;
   final EdgeInsetsGeometry? margin;
-  const XText(this.title, {Key? key, this.color, this.size, this.align, this.style, this.margin})
+  const XText(this.title, {Key? key, this.direction, this.color, this.size, this.align, this.style, this.margin})
       : super(key: key);
 
   @override
@@ -27,6 +29,7 @@ class XText extends StatelessWidget {
             ),
         textAlign: align,
         overflow: TextOverflow.ellipsis,
+        textDirection: direction,
       ),
     );
   }

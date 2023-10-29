@@ -5,7 +5,8 @@ import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:work_timer/db/entities/time.dart';
 import 'package:work_timer/presentation/screens/dialogs/create_day_dialog.dart';
-import 'package:work_timer/utils/x_widgets/x_divider.dart';
+import 'package:work_timer/utils/routes.dart';
+import 'package:work_timer/utils/x_widgets/x_container.dart';
 import 'package:work_timer/utils/x_widgets/x_text.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/extensions.dart';
@@ -23,10 +24,9 @@ class MonthDaysScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           title: Text(store.currentMonth!.name),
-          centerTitle: true,
           leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded),
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
           ),
         ),
         floatingActionButton: FloatingActionButton(
@@ -42,44 +42,71 @@ class MonthDaysScreen extends StatelessWidget {
         body: store.isLoading
             ? const Center(child: CircularProgressIndicator())
             : store.workDays.isEmpty
-                ? const Center(child: Text('No work days'))
+                ? Center(child: Text(context.l10n.noWorkDays))
                 : Observer(builder: (_) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Observer(builder: (_) {
-                          return LinearPercentIndicator(
-                            percent: store.progressValue,
-                            leading: XText(
-                              store.totalTime.toString(),
-                              style: context.titleMedium,
+                          return XContainer(
+                            onTap: () => context.pushNamed(Routes.monthDetails),
+                            color: context.primaryContainerColor,
+                            padding: const EdgeInsets.all(Dimens.mPadding),
+                            child: Column(
+                              children: [
+                                LinearPercentIndicator(
+                                  percent: store.progressValue,
+                                  isRTL: context.isFarsi,
+                                  backgroundColor: store.progressColor.withOpacity(0.2),
+                                  alignment: MainAxisAlignment.center,
+                                  leading: XText(
+                                    store.calculatedTime.toString(),
+                                    style: context.titleMedium,
+                                    direction: TextDirection.ltr,
+                                  ),
+                                  animation: true,
+                                  trailing: XText(
+                                    store.currentMonth!.dutyHours.time.toString(),
+                                    style: context.titleMedium,
+                                    direction: TextDirection.ltr,
+                                  ),
+                                  center: XText(store.progressText,
+                                      size: 12, style: context.titleSmall, direction: TextDirection.ltr),
+                                  barRadius: const Radius.circular(Dimens.xsPadding),
+                                  progressColor: store.progressColor,
+                                  lineHeight: 20,
+                                ),
+                                const SizedBox(height: Dimens.mPadding),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    XText(
+                                      store.remainingTime.toString(),
+                                      style: context.titleMedium,
+                                      direction: TextDirection.ltr,
+                                      color: store.progressColor,
+                                    ),
+                                    const SizedBox(width: Dimens.sPadding),
+                                    XText(
+                                      store.isOvertime ? context.l10n.overtimeDone : context.l10n.hoursLeft,
+                                      style: context.titleMedium,
+                                    ),
+                                    const Spacer(),
+                                    Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: store.progressColor.withOpacity(0.4),
+                                    ),
+                                  ],
+                                )
+                              ],
                             ),
-                            animation: true,
-                            trailing: XText(
-                              store.currentMonth!.dutyHours.time.toString(),
-                              style: context.titleMedium,
-                            ),
-                            center: XText(
-                              store.progressText,
-                              size: 12,
-                              style: context.titleSmall,
-                            ),
-                            barRadius: const Radius.circular(Dimens.sPadding),
-                            progressColor: store.progressColor,
-                            lineHeight: 20,
-                            backgroundColor: context.outlineColor,
                           );
-                        }).margin(const EdgeInsets.all(Dimens.mPadding)),
-                        Observer(builder: (_) {
-                          return XText(
-                            'Remaining Hours: ${store.remainingTime.toString()}',
-                            style: context.titleMedium,
-                          );
-                        }).marginOnly(
-                          left: Dimens.mPadding,
-                          right: Dimens.mPadding,
+                        }).margin(const EdgeInsets.all(Dimens.sPadding)),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.only(top: Dimens.sPadding, start: Dimens.mPadding),
+                          child: XText(context.l10n.days,
+                              style: context.titleMedium, color: context.onPrimaryContainerColor.withOpacity(0.7)),
                         ),
-                        const XDivider(indent: Dimens.sPadding, thickness: 1),
                         ListView.separated(
                           padding: const EdgeInsets.all(Dimens.sPadding),
                           itemCount: store.sortedByDate.length,
@@ -111,15 +138,39 @@ class WorkDayItem extends StatelessWidget {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
-      contentPadding: const EdgeInsets.only(left: Dimens.mPadding),
+      contentPadding: const EdgeInsetsDirectional.only(start: Dimens.mPadding),
       tileColor: context.primaryContainerColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.sPadding),
         side: BorderSide(color: context.outlineColor),
       ),
-      title: Text(Jalali.fromDateTime(workDay.date).formatCompactDate()),
-      subtitle: Text('${workDay.arrival.padLeft().padLeft()}  -  ${workDay.exit.padLeft().toString()}'),
-      leading: Icon(Icons.work_history_rounded, color: context.surfaceColor),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          XText(
+            Jalali.fromDateTime(workDay.date).myFormat,
+            style: context.titleMedium,
+            direction: TextDirection.ltr,
+          ),
+          const SizedBox(width: Dimens.mPadding),
+          const XText(' - '),
+          const SizedBox(width: Dimens.mPadding),
+          XText(workDay.arrival.padLeft().toString(), direction: TextDirection.ltr),
+          const XText(' - '),
+          XText(workDay.exit.padLeft().toString(), direction: TextDirection.ltr),
+        ],
+      ),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          XText(
+            workDay.type.text(context),
+            style: context.bodySmall,
+            color: workDay.type.color.withOpacity(0.8),
+          ),
+        ],
+      ),
+      leading: Icon(Icons.work_history_rounded, color: workDay.type.color.withOpacity(0.8)),
       trailing: IconButton(
         onPressed: onDelete,
         icon: Icon(Icons.delete, color: context.errorColor),
@@ -138,5 +189,12 @@ class WorkDayItem extends StatelessWidget {
       //   ],
       // ),
     );
+  }
+}
+
+extension JalaliUtils on Jalali {
+  String get myFormat {
+    final f = formatter;
+    return '${f.yyyy} - ${f.mm} - ${f.dd}';
   }
 }

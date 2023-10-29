@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dimens.dart';
 
 extension FormatedDate on DateTime {
@@ -38,6 +39,9 @@ extension GeneralExtensions on BuildContext {
   bool get isLtr => _textDirection == TextDirection.ltr.name.toLowerCase();
 
   void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
+  AppLocalizations get l10n => AppLocalizations.of(this)!;
+  Locale get local => Localizations.localeOf(this);
+  bool get isFarsi => local == const Locale('fa');
 }
 
 extension ThemeExtensions on BuildContext {
@@ -107,8 +111,7 @@ extension WidgetExtensions on Widget {
   Widget margin([EdgeInsetsGeometry margin = const EdgeInsets.all(Dimens.sPadding)]) =>
       Padding(padding: margin, child: this);
 
-  Widget marginAll([double margin = Dimens.sPadding]) =>
-      Padding(padding: EdgeInsets.all(margin), child: this);
+  Widget marginAll([double margin = Dimens.sPadding]) => Padding(padding: EdgeInsets.all(margin), child: this);
 
   Widget marginLTRB([
     double left = Dimens.zero,

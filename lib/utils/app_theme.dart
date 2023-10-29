@@ -1,26 +1,28 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:work_timer/utils/dimens.dart';
+import 'package:work_timer/utils/extensions.dart';
 import 'app_colors.dart';
 
-// void changeStatusBarColor(BuildContext context) {
-//   SystemChrome.setSystemUIOverlayStyle(
-//     SystemUiOverlayStyle(
-//       statusBarColor: context.primaryColor,
-//       //statusBarIconBrightness: Brightness.dark,
-//       //statusBarBrightness: Brightness.light,
-//       systemNavigationBarDividerColor: context.primaryColor,
-//       //systemNavigationBarColor: context.backgroundColor,
-//     ),
-//   );
-// }
+void changeStatusBarColor(BuildContext context) {
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: context.primaryColor,
+      //statusBarIconBrightness: Brightness.dark,
+      //statusBarBrightness: Brightness.light,
+      systemNavigationBarDividerColor: context.primaryColor,
+      systemNavigationBarColor: context.primaryColor,
+    ),
+  );
+}
 
-enum FontFamily { comfortaa }
+enum FontFamily { comfortaa, vazir, sahel }
 
-ThemeData getTheme(ThemeScheme theme, {bool isRtl = false}) {
+ThemeData getTheme(BuildContext context, ThemeScheme theme, {bool isRtl = false}) {
   final scheme = colorSchemeMap[theme];
   return ThemeData(
-      fontFamily: FontFamily.comfortaa.name,
+      fontFamily: context.isFarsi ? FontFamily.sahel.name : FontFamily.comfortaa.name,
       brightness: Brightness.light,
       useMaterial3: true,
       colorScheme: scheme,
@@ -28,6 +30,8 @@ ThemeData getTheme(ThemeScheme theme, {bool isRtl = false}) {
       scaffoldBackgroundColor: scheme?.background,
       appBarTheme: AppBarTheme(
         elevation: 3,
+        centerTitle: true,
+        
         backgroundColor: scheme?.primary,
         foregroundColor: scheme?.onPrimary,
         shape: const RoundedRectangleBorder(
@@ -38,7 +42,7 @@ ThemeData getTheme(ThemeScheme theme, {bool isRtl = false}) {
         titleTextStyle: titleLarge.copyWith(
           color: scheme?.onPrimary,
           fontSize: 22,
-          fontFamily: FontFamily.comfortaa.name,
+          fontFamily: context.isFarsi ? FontFamily.sahel.name : FontFamily.comfortaa.name,
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(

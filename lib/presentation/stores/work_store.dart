@@ -52,19 +52,93 @@ abstract class _WorkStoreBase with Store {
   }
 
   @computed
-  Time get remainingTime {
-    return currentMonth!.dutyHours.time.differenceWith(totalTime);
+  Time get workHours {
+    Time time = const Time(hour: '0', minute: '00');
+    for (final day in workDays) {
+      if (day.type != WorkDayType.absence) {
+        time = time.add(day.exit.differenceWith(day.arrival));
+      }
+    }
+    return time.padLeft();
   }
 
   @computed
+  Time get remainingTime {
+    if (isOvertime) return calculatedTime.differenceWith(currentMonth!.dutyHours.time).padLeft();
+    return currentMonth!.dutyHours.time.differenceWith(calculatedTime).padLeft();
+  }
+
+  @computed
+  Time get absenceTime {
+    return currentMonth!.absenceHours.time.padLeft();
+  }
+
+  @computed
+  Time get sumOfUsedAbsenceTime {
+    Time time = const Time(hour: '0', minute: '00');
+    for (final day in workDays) {
+      if (day.type == WorkDayType.absence) {
+        time = time.add(day.exit.differenceWith(day.arrival));
+      }
+    }
+    return time.padLeft();
+  }
+
+  @computed
+  Time get sumOfRemainingAbsenceTime {
+    if (sumOfUsedAbsenceTime >= absenceTime) return const Time(hour: '00', minute: '00');
+    return absenceTime.differenceWith(sumOfUsedAbsenceTime).padLeft();
+  }
+
+  @computed
+  Time get sumOfRemoteTime {
+    Time time = const Time(hour: '0', minute: '00');
+    for (final day in workDays) {
+      if (day.type == WorkDayType.remote) {
+        time = time.add(day.exit.differenceWith(day.arrival));
+      }
+    }
+    return time.padLeft();
+  }
+
+  @computed
+  Time get sumOfMissionTime {
+    Time time = const Time(hour: '0', minute: '00');
+    for (final day in workDays) {
+      if (day.type == WorkDayType.mission) {
+        time = time.add(day.exit.differenceWith(day.arrival));
+      }
+    }
+    return time.padLeft();
+  }
+
+  @computed
+  Time get extraAbsenceTime {
+    if (sumOfUsedAbsenceTime <= absenceTime) return const Time(hour: '00', minute: '00');
+    return sumOfUsedAbsenceTime.differenceWith(absenceTime).padLeft();
+  }
+
+  @computed
+  Time get calculatedTime => totalTime - extraAbsenceTime;
+
+  @computed
+  bool get isOvertime => calculatedTime > currentMonth!.dutyHours.time;
+
+  @computed
   double get progressValue {
-    return totalTime.percentOf(currentMonth!.dutyHours.time);
+    final value = calculatedTime.percentOf(currentMonth!.dutyHours.time);
+    return value > 1.0 ? 1.0 : value;
   }
 
   @computed
   String get progressText {
     final percent = (progressValue * 100).toStringAsFixed(1);
     return '$percent %';
+  }
+
+  @computed
+  Time get dutyHours {
+    return currentMonth!.dutyHours.time.padLeft();
   }
 
   @computed

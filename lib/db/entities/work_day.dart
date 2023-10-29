@@ -1,4 +1,6 @@
 import 'package:floor/floor.dart';
+import 'package:flutter/material.dart';
+import 'package:work_timer/utils/extensions.dart';
 import 'month.dart';
 import 'time.dart';
 
@@ -14,8 +16,8 @@ class WorkDay {
   final DateTime date;
   final Time arrival;
   final Time exit;
-  @ColumnInfo(name: 'is_remote')
-  final bool isRemote;
+  @ColumnInfo(name: 'type')
+  final WorkDayType type;
   @ColumnInfo(name: 'month_id')
   final int monthId;
 
@@ -24,7 +26,7 @@ class WorkDay {
     required this.date,
     required this.arrival,
     required this.exit,
-    required this.isRemote,
+    this.type = WorkDayType.presence,
     required this.monthId,
   });
 
@@ -32,7 +34,7 @@ class WorkDay {
     DateTime? date,
     Time? arrival,
     Time? exit,
-    bool? isRemote,
+    WorkDayType? type,
     int? monthId,
   }) {
     return WorkDay(
@@ -40,12 +42,44 @@ class WorkDay {
       date: date ?? this.date,
       arrival: arrival ?? this.arrival,
       exit: exit ?? this.exit,
-      isRemote: isRemote ?? this.isRemote,
+      type: type ?? this.type,
       monthId: monthId ?? this.monthId,
     );
   }
 
   @override
-  String toString() =>
-      'WorkDay(id: $id, date: $date, arrival: $arrival, exit: $exit, isRemote: $isRemote, monthId: $monthId)';
+  String toString() => 'WorkDay(id: $id, date: $date, arrival: $arrival, exit: $exit, type: $type, monthId: $monthId)';
+}
+
+extension WorkDayExtensions on WorkDay {
+  bool hasConflictWith(WorkDay other) {
+    return date.compareTo(other.date) == 0 &&
+        (other.arrival.isBetween(arrival, exit) || other.exit.isBetween(arrival, exit)) &&
+        type == other.type;
+  }
+}
+
+enum WorkDayType {
+  presence,
+  absence,
+  remote,
+  mission;
+
+  String text(BuildContext context) {
+    return switch (this) {
+      WorkDayType.presence => context.l10n.presence,
+      WorkDayType.absence => context.l10n.absence,
+      WorkDayType.remote => context.l10n.remote,
+      WorkDayType.mission => context.l10n.mission,
+    };
+  }
+
+  Color get color {
+    return switch (this) {
+      WorkDayType.presence => Colors.green,
+      WorkDayType.absence => Colors.red,
+      WorkDayType.remote => Colors.blue,
+      WorkDayType.mission => Colors.orange,
+    };
+  }
 }

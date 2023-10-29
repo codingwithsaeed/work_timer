@@ -4,8 +4,11 @@ import 'package:mobx/mobx.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:work_timer/db/entities/work_day.dart';
+import 'package:work_timer/presentation/screens/month_days_screen.dart';
 import 'package:work_timer/presentation/stores/work_store.dart';
 import 'package:work_timer/utils/extensions.dart';
+import 'package:work_timer/utils/x_widgets/x_container.dart';
+import 'package:work_timer/utils/x_widgets/x_text.dart';
 import 'package:work_timer/utils/x_widgets/x_text_button.dart';
 
 import '../../../db/entities/time.dart';
@@ -25,9 +28,9 @@ abstract class _CreateDayStoreBase with Store {
   void setDate(DateTime? date) => this.date = date;
 
   @computed
-  String get dateText {
-    if (date == null) return 'Select date';
-    return Jalali.fromDateTime(date!).formatCompactDate();
+  String? get dateText {
+    if (date == null) return null;
+    return Jalali.fromDateTime(date!).myFormat;
   }
 
   @observable
@@ -36,8 +39,8 @@ abstract class _CreateDayStoreBase with Store {
   void setArrival(Time? arrival) => this.arrival = arrival;
 
   @computed
-  String get arrivalText {
-    if (arrival == null) return 'Select arrival';
+  String? get arrivalText {
+    if (arrival == null) return null;
     return arrival!.padLeft().toString();
   }
 
@@ -47,22 +50,22 @@ abstract class _CreateDayStoreBase with Store {
   void setExit(Time? exit) => this.exit = exit;
 
   @computed
-  String get exitText {
-    if (exit == null) return 'Select exit';
+  String? get exitText {
+    if (exit == null) return null;
     return exit!.padLeft().toString();
   }
 
   @observable
-  bool isRemote = false;
+  WorkDayType type = WorkDayType.presence;
   @action
-  void setIsRemote(bool isRemote) => this.isRemote = isRemote;
+  void setType(WorkDayType type) => this.type = type;
 
   @computed
   bool get isValid => date != null && arrival != null && exit != null;
 
   @computed
   WorkDay? get workDay =>
-      isValid ? WorkDay(date: date!, arrival: arrival!, exit: exit!, isRemote: isRemote, monthId: monthId) : null;
+      isValid ? WorkDay(date: date!, arrival: arrival!, exit: exit!, type: type, monthId: monthId) : null;
 }
 
 class CreateDayDialog extends StatelessWidget {
@@ -78,6 +81,12 @@ class CreateDayDialog extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            XText(
+              context.l10n.createDay,
+              style: context.titleLarge,
+              align: TextAlign.center,
+            ),
+            const SizedBox(height: Dimens.mPadding),
             Observer(builder: (_) {
               return XTextButton(
                 onTap: () async {
@@ -86,7 +95,8 @@ class CreateDayDialog extends StatelessWidget {
                 },
                 color: context.backgroundColor,
                 borderColor: context.outlineColor,
-                text: store.dateText,
+                text: store.dateText ?? context.l10n.selectDate,
+                textDirection: TextDirection.ltr,
               );
             }),
             const SizedBox(height: Dimens.sPadding),
@@ -107,10 +117,10 @@ class CreateDayDialog extends StatelessWidget {
                         );
                       }
                     },
-                    text: store.arrivalText,
+                    text: store.arrivalText ?? context.l10n.arrivalTime,
                   );
                 }).expand(),
-                const SizedBox(width: Dimens.sPadding),
+                const SizedBox(width: Dimens.mPadding),
                 Observer(builder: (_) {
                   return XTextButton(
                     color: context.backgroundColor,
@@ -126,16 +136,50 @@ class CreateDayDialog extends StatelessWidget {
                         );
                       }
                     },
-                    text: store.exitText,
+                    text: store.exitText ?? context.l10n.exitTime,
                   );
                 }).expand(),
               ],
             ),
-            const SizedBox(height: Dimens.sPadding),
+            const SizedBox(height: Dimens.sPadding + Dimens.xsPadding),
+            XContainer(
+              padding: const EdgeInsets.all(Dimens.sPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: WorkDayType.values.map(
+                  (e) {
+                    return Observer(builder: (_) {
+                      return RadioListTile<WorkDayType>(
+                        value: e,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        groupValue: store.type,
+                        contentPadding: EdgeInsets.zero,
+                        tileColor: context.primaryColor,
+                        visualDensity: VisualDensity.compact,
+                        selectedTileColor: context.primaryColor,
+                        selected: store.type == e,
+                        hoverColor: context.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Dimens.sPadding),
+                          side: BorderSide(color: context.outlineColor),
+                        ),
+                        title: XText(
+                          e.text(context),
+                        ),
+                        dense: true,
+                        onChanged: (type) => store.setType(type ?? WorkDayType.presence),
+                      );
+                    });
+                  },
+                ).toList(),
+              ),
+            ),
+            const SizedBox(height: Dimens.sPadding + Dimens.xsPadding),
             Observer(builder: (_) {
               return XTextButton(
                 onTap: store.isValid ? () => context.pop<WorkDay>(store.workDay) : null,
-                text: 'Save',
+                text: context.l10n.save,
               );
             }),
             const SizedBox(height: Dimens.sPadding),
@@ -143,7 +187,7 @@ class CreateDayDialog extends StatelessWidget {
               color: context.backgroundColor,
               borderColor: context.outlineColor,
               onTap: () => context.pop(),
-              text: 'Cancel',
+              text: context.l10n.cancel,
             ),
           ],
         );

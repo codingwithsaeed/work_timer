@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
+import 'package:work_timer/locale_notifier.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/extensions.dart';
 import '../../utils/dimens.dart';
@@ -18,11 +21,14 @@ class MonthListScreen extends StatelessWidget {
     final store = context.read<WorkStore>()..getMonths();
     return Observer(builder: (_) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('TimeSheet'),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-        ),
+        appBar: AppBar(title: Text(context.l10n.appName), automaticallyImplyLeading: false, actions: [
+          IconButton(
+              icon: const Icon(Icons.translate),
+              onPressed: () {
+                log('Switching from ${context.read<LocaleNotifier>().locale}');
+                context.read<LocaleNotifier>().switchLocale(context);
+              })
+        ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             final result = await DialogUtils.showXModalBottomSheetPage<Month?>(
@@ -36,11 +42,11 @@ class MonthListScreen extends StatelessWidget {
         body: store.isLoading
             ? const Center(child: CircularProgressIndicator())
             : store.months.isEmpty
-                ? const Center(child: Text('No months'))
+                ? Center(child: Text(context.l10n.noMonth))
                 : Observer(builder: (_) {
                     return ListView.separated(
-                      separatorBuilder: (context, index) => const SizedBox(height: Dimens.mPadding),
-                      padding: const EdgeInsets.all(Dimens.mPadding),
+                      separatorBuilder: (context, index) => const SizedBox(height: Dimens.sPadding),
+                      padding: const EdgeInsets.all(Dimens.sPadding),
                       itemBuilder: (_, index) {
                         final month = store.months[index];
                         return MonthItem(
@@ -73,14 +79,14 @@ class MonthItem extends StatelessWidget {
       onTap: onTap,
       dense: true,
       visualDensity: VisualDensity.compact,
-      contentPadding: const EdgeInsets.only(left: Dimens.mPadding),
+      contentPadding: const EdgeInsetsDirectional.only(start: Dimens.mPadding),
       tileColor: context.primaryContainerColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.sPadding),
         side: BorderSide(color: context.outlineColor),
       ),
       title: XText(month.name, style: context.titleMedium),
-      subtitle: XText('Duty: ${month.dutyHours} hours'),
+      subtitle: XText(context.l10n.dutyHoursOf(month.dutyHours.toString())),
       leading: Icon(Icons.calendar_month_rounded, color: context.outlineColor),
       trailing: IconButton(onPressed: onDelete, icon: Icon(Icons.delete, color: context.errorColor)),
     );

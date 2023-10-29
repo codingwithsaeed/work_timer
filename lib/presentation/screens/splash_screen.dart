@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:work_timer/utils/app_theme.dart';
 import '../../utils/extensions.dart';
 import '../../utils/dimens.dart';
 import '../../utils/routes.dart';
@@ -10,6 +11,7 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    changeStatusBarColor(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 1), () {
         context.pushReplacementNamed(Routes.monthList);
@@ -21,7 +23,7 @@ class SplashScreen extends StatelessWidget {
         children: [
           Center(
             child: XText(
-              'TimeSheet',
+              context.l10n.appName,
               color: context.onPrimaryColor,
               style: context.titleLarge.copyWith(fontWeight: FontWeight.w900),
               size: 35.sp,

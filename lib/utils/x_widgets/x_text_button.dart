@@ -20,6 +20,7 @@ class XTextButton extends StatelessWidget {
   final double width;
   final double? height;
   final double elevation;
+  final TextDirection? textDirection;
 
   const XTextButton({
     Key? key,
@@ -37,6 +38,7 @@ class XTextButton extends StatelessWidget {
     this.textSize,
     this.textStyle,
     this.loadingColor,
+    this.textDirection,
   }) : super(key: key);
 
   @override
@@ -68,6 +70,7 @@ class XTextButton extends StatelessWidget {
               color: textColor ?? onButtonColor,
               size: textSize,
               align: TextAlign.center,
+              direction: textDirection,
             ),
     );
   }
