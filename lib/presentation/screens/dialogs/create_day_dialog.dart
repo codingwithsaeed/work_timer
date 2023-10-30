@@ -23,6 +23,19 @@ abstract class _CreateDayStoreBase with Store {
   _CreateDayStoreBase(this.monthId);
 
   @observable
+  WorkDay? workDayToEdit;
+  @action
+  void setWorkDay(WorkDay? workDay) => workDayToEdit = workDay;
+
+  void init(WorkDay? workDay) {
+    setWorkDay(workDay);
+    setDate(workDay?.date);
+    setArrival(workDay?.arrival);
+    setExit(workDay?.exit);
+    setType(workDay?.type ?? WorkDayType.presence);
+  }
+
+  @observable
   DateTime? date;
   @action
   void setDate(DateTime? date) => this.date = date;
@@ -64,12 +77,16 @@ abstract class _CreateDayStoreBase with Store {
   bool get isValid => date != null && arrival != null && exit != null;
 
   @computed
+  bool get canEdit => isValid && workDay != null && workDayToEdit != null && !workDay!.isEqualTo(workDayToEdit!);
+
+  @computed
   WorkDay? get workDay =>
       isValid ? WorkDay(date: date!, arrival: arrival!, exit: exit!, type: type, monthId: monthId) : null;
 }
 
 class CreateDayDialog extends StatelessWidget {
-  const CreateDayDialog({Key? key}) : super(key: key);
+  final WorkDay? day;
+  const CreateDayDialog({Key? key, this.day}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,12 +94,12 @@ class CreateDayDialog extends StatelessWidget {
     return Provider(
       create: (_) => CreateDayStore(workStore.currentMonth!.id!),
       child: Builder(builder: (context) {
-        final store = context.read<CreateDayStore>();
+        final store = context.read<CreateDayStore>()..init(day);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             XText(
-              context.l10n.createDay,
+              day == null ? context.l10n.createDay : context.l10n.editDay,
               style: context.titleLarge,
               align: TextAlign.center,
             ),
@@ -175,13 +192,24 @@ class CreateDayDialog extends StatelessWidget {
                 ).toList(),
               ),
             ),
-            const SizedBox(height: Dimens.sPadding + Dimens.xsPadding),
-            Observer(builder: (_) {
-              return XTextButton(
-                onTap: store.isValid ? () => context.pop<WorkDay>(store.workDay) : null,
-                text: context.l10n.save,
-              );
-            }),
+            if (day != null) ...[
+              const SizedBox(height: Dimens.sPadding + Dimens.xsPadding),
+              Observer(builder: (_) {
+                return XTextButton(
+                  onTap: store.canEdit ? () => context.pop<WorkDay>(store.workDay?.copyWith(id: day?.id)) : null,
+                  text: context.l10n.save,
+                );
+              }),
+            ],
+            if (day == null) ...[
+              const SizedBox(height: Dimens.sPadding + Dimens.xsPadding),
+              Observer(builder: (_) {
+                return XTextButton(
+                  onTap: store.isValid ? () => context.pop<WorkDay>(store.workDay) : null,
+                  text: context.l10n.save,
+                );
+              }),
+            ],
             const SizedBox(height: Dimens.sPadding),
             XTextButton(
               color: context.backgroundColor,

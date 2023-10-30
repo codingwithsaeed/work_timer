@@ -31,13 +31,12 @@ ThemeData getTheme(BuildContext context, ThemeScheme theme, {bool isRtl = false}
       appBarTheme: AppBarTheme(
         elevation: 3,
         centerTitle: true,
-        
         backgroundColor: scheme?.primary,
         foregroundColor: scheme?.onPrimary,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(Dimens.sPadding),
-          bottomLeft: Radius.circular(Dimens.sPadding),
+          bottomRight: Radius.circular(Dimens.mPadding),
+          bottomLeft: Radius.circular(Dimens.mPadding),
         )),
         titleTextStyle: titleLarge.copyWith(
           color: scheme?.onPrimary,
@@ -77,7 +76,7 @@ ColorScheme createScheme(Color primary, {Color? secondary, Color? error}) {
     secondary: secondary ?? AppColors.amber,
     background: AppColors.background,
     primaryContainer: AppColors.white,
-    error: AppColors.errorRed,
+    error: error ?? AppColors.errorRed,
     outline: AppColors.outline,
     surface: AppColors.border,
     scrim: AppColors.icon,

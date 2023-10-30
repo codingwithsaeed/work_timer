@@ -46,7 +46,7 @@ abstract final class DialogUtils {
     );
   }
 
-  static Future<void> showXBottomSheet(
+  static Future<T?> showXBottomSheet<T>(
     BuildContext context, {
     required String title,
     List<Widget>? actions,
@@ -56,7 +56,7 @@ abstract final class DialogUtils {
     Widget? contentWidget,
     bool isDissmissable = true,
   }) async {
-    await showModalBottomSheet(
+    return await showModalBottomSheet<T>(
       isDismissible: isDissmissable,
       isScrollControlled: true,
       enableDrag: false,
@@ -171,11 +171,7 @@ abstract final class DialogUtils {
                     borderRadius: BorderRadius.circular(Dimens.mPadding),
                   ),
                 ),
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.all(Dimens.mPadding),
-                  child: content,
-                )),
+                Expanded(child: content.marginAll(Dimens.mPadding)),
               ],
             )),
           ),

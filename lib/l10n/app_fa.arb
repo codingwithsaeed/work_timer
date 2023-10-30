@@ -2,7 +2,9 @@
   "@@locale": "fa",
   "appName": "تایم شیت",
   "createMonth": "ایجاد ماه",
+  "editMonth": "ویرایش ماه",
   "monthName": "نام ماه",
+  "deleteMonth": "حذف ماه",
   "noMonth": "هیچ ماه ای وارد نشده است",
   "dutyHours": "ساعات کار موظفی",
   "allowAbsenceHours": "ساعات مرخصی استحقاقی",
@@ -10,6 +12,8 @@
   "save": "ذخیره",
   "cancel": "انصراف",
   "createDay": "ثبت روز",
+  "editDay": "ویرایش روز",
+  "deleteDay": "حذف روز",
   "noWorkDays": "هیچ روز کاری ای وارد نشده است",
   "selectDate": "انتخاب تاریخ",
   "arrivalTime": "ساعت ورود",
@@ -33,5 +37,9 @@
   "sumOfRemainingHours": "ساعات باقی مانده",
   "sumOfOvertimeHours": "ساعات اضافه کاری",
   "sumOfCalculatedHours": "ساعات محاسبه شده",
-  "infoOf" : "اطلاعات {month}"
+  "infoOf": "اطلاعات {month}",
+  "doYouWantToDelete": "آیا می خواهید ماه {month} را حذف کنید؟",
+  "doYouWantToDeleteDay": "آیا می خواهید این روز را حذف کنید؟",
+  "delete": "حذف",
+  "dayHasConflict": "روز وارد شده با بقیه روزها تداخل دارد"
 }

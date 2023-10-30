@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:toastification/toastification.dart';
 import 'package:work_timer/db/entities/time.dart';
 import 'package:work_timer/presentation/screens/dialogs/create_day_dialog.dart';
 import 'package:work_timer/utils/routes.dart';
 import 'package:work_timer/utils/x_widgets/x_container.dart';
 import 'package:work_timer/utils/x_widgets/x_text.dart';
+import 'package:work_timer/utils/x_widgets/x_text_button.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/extensions.dart';
 import '../../db/entities/work_day.dart';
@@ -35,7 +38,18 @@ class MonthDaysScreen extends StatelessWidget {
               context,
               content: const CreateDayDialog(),
             );
-            if (result != null) store.insertWorkDay(result);
+            if (result != null) {
+              final error = await store.insertWorkDay(result);
+              if (error != null && context.mounted) {
+                toastification.show(
+                  context: context,
+                  title: error,
+                  type: ToastificationType.error,
+                  style: ToastificationStyle.fillColored,
+                  autoCloseDuration: const Duration(seconds: 3),
+                );
+              }
+            }
           },
           child: const Icon(Icons.add),
         ),
@@ -51,6 +65,7 @@ class MonthDaysScreen extends StatelessWidget {
                           return XContainer(
                             onTap: () => context.pushNamed(Routes.monthDetails),
                             color: context.primaryContainerColor,
+                            borderRadius: Dimens.mPadding,
                             padding: const EdgeInsets.all(Dimens.mPadding),
                             child: Column(
                               children: [
@@ -116,7 +131,30 @@ class MonthDaysScreen extends StatelessWidget {
                             final workDay = store.sortedByDate[index];
                             return WorkDayItem(
                               workDay: workDay,
-                              onDelete: () => store.deleteWorkDay(workDay),
+                              onDelete: () async {
+                                final result = await DialogUtils.showXBottomSheet<bool?>(
+                                  context,
+                                  title: context.l10n.deleteDay,
+                                  content: context.l10n.doYouWantToDeleteDay,
+                                  cancelActionText: context.l10n.cancel,
+                                  actions: [
+                                    XTextButton(
+                                      text: context.l10n.delete,
+                                      color: context.errorColor,
+                                      textColor: context.onErrorColor,
+                                      onTap: () => context.pop(true),
+                                    ),
+                                  ],
+                                );
+                                if (result != null && result) store.deleteWorkDay(workDay);
+                              },
+                              onEdit: () async {
+                                final result = await DialogUtils.showXModalBottomSheetPage<WorkDay?>(
+                                  context,
+                                  content: CreateDayDialog(day: workDay),
+                                );
+                                if (result != null) store.updateWorkDay(result);
+                              },
                             );
                           },
                         ).expand(),
@@ -131,7 +169,8 @@ class MonthDaysScreen extends StatelessWidget {
 class WorkDayItem extends StatelessWidget {
   final WorkDay workDay;
   final VoidCallback? onDelete;
-  const WorkDayItem({Key? key, required this.workDay, this.onDelete}) : super(key: key);
+  final VoidCallback? onEdit;
+  const WorkDayItem({Key? key, required this.workDay, this.onDelete, this.onEdit}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +180,7 @@ class WorkDayItem extends StatelessWidget {
       contentPadding: const EdgeInsetsDirectional.only(start: Dimens.mPadding),
       tileColor: context.primaryContainerColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Dimens.sPadding),
+        borderRadius: BorderRadius.circular(Dimens.mPadding),
         side: BorderSide(color: context.outlineColor),
       ),
       title: Row(
@@ -152,12 +191,6 @@ class WorkDayItem extends StatelessWidget {
             style: context.titleMedium,
             direction: TextDirection.ltr,
           ),
-          const SizedBox(width: Dimens.mPadding),
-          const XText(' - '),
-          const SizedBox(width: Dimens.mPadding),
-          XText(workDay.arrival.padLeft().toString(), direction: TextDirection.ltr),
-          const XText(' - '),
-          XText(workDay.exit.padLeft().toString(), direction: TextDirection.ltr),
         ],
       ),
       subtitle: Row(
@@ -168,26 +201,28 @@ class WorkDayItem extends StatelessWidget {
             style: context.bodySmall,
             color: workDay.type.color.withOpacity(0.8),
           ),
+          const SizedBox(width: Dimens.mPadding),
+          const XText(' - '),
+          const SizedBox(width: Dimens.mPadding),
+          XText(workDay.arrival.padLeft().toString(), direction: TextDirection.ltr),
+          const XText(' - '),
+          XText(workDay.exit.padLeft().toString(), direction: TextDirection.ltr),
         ],
       ),
-      leading: Icon(Icons.work_history_rounded, color: workDay.type.color.withOpacity(0.8)),
-      trailing: IconButton(
-        onPressed: onDelete,
-        icon: Icon(Icons.delete, color: context.errorColor),
-        color: context.errorColor,
+      leading: Icon(Icons.work_history_rounded, color: context.surfaceColor),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            onPressed: onEdit,
+            icon: Icon(Iconsax.edit_2, color: context.secondaryColor),
+          ),
+          IconButton(
+            onPressed: onDelete,
+            icon: Icon(Iconsax.trash, color: context.errorColor),
+          )
+        ],
       ),
-      // trailing: Row(
-      //   children: [
-      //     IconButton(
-      //       onPressed: () {},
-      //       icon: Icon(Icons.edit, color: context.secondaryColor),
-      //     ),
-      //     IconButton(
-      //       onPressed: () {},
-      //       icon: Icon(Icons.delete, color: context.errorColor),
-      //     )
-      //   ],
-      // ),
     );
   }
 }

@@ -21,13 +21,22 @@ class SplashScreen extends StatelessWidget {
       backgroundColor: context.primaryColor,
       body: Stack(
         children: [
-          Center(
-            child: XText(
-              context.l10n.appName,
-              color: context.onPrimaryColor,
-              style: context.titleLarge.copyWith(fontWeight: FontWeight.w900),
-              size: 35.sp,
-            ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(Dimens.sPadding),
+                color: context.primaryContainerColor,
+                child: XText(
+                  context.l10n.appName,
+                  color: context.primaryColor,
+                  style: context.titleLarge.copyWith(fontWeight: FontWeight.w900),
+                  size: 35.sp,
+                  align: TextAlign.center,
+                ),
+              ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.all(Dimens.mPadding),

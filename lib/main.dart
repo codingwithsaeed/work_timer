@@ -10,6 +10,8 @@ import 'di/injector.dart';
 import 'utils/app_theme.dart';
 import 'utils/routes.dart';
 
+final navKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await injectDependencies();
@@ -39,6 +41,7 @@ class MainApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
+              navigatorKey: navKey,
               locale: context.watch<LocaleNotifier>().locale,
               supportedLocales: const [Locale('en'), Locale('fa')],
               builder: (context, child) => MediaQuery(

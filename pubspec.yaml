@@ -28,6 +28,7 @@ dependencies:
   persian_datetime_picker: ^2.6.0
   percent_indicator: ^4.2.3
   intl: ^0.18.1
+  toastification: ^1.0.2
 
 dev_dependencies:
   flutter_test:

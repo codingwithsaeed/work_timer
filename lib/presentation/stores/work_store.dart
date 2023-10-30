@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
 import 'package:work_timer/db/entities/time.dart';
+import 'package:work_timer/main.dart';
+import 'package:work_timer/utils/extensions.dart';
 import '../../db/entities/month.dart';
 import '../../db/entities/work_day.dart';
 import '../../repository/work_repository.dart';
@@ -199,17 +201,30 @@ abstract class _WorkStoreBase with Store {
     setLoading(false);
   }
 
-  Future<void> insertWorkDay(WorkDay day) async {
+  Future<String?> insertWorkDay(WorkDay day) async {
+    if (hasConflict(day)) {
+      return navKey.currentContext!.l10n.dayHasConflict;
+    }
     setLoading(true);
     final result = await _repository.insertWorkDay(day);
-    result.fold(
-      (failure) => errorStore.setError(failure.error),
-      (_) async => await getWorkDays(),
-    );
     setLoading(false);
+    return result.fold(
+      (failure) {
+        errorStore.setError(failure.error);
+        return failure.error;
+      },
+      (_) async {
+        await getWorkDays();
+        return null;
+      },
+    );
   }
 
   Future<void> updateWorkDay(WorkDay day) async {
+    if (hasConflict(day)) {
+      errorStore.setError(navKey.currentContext!.l10n.dayHasConflict);
+      return;
+    }
     setLoading(true);
     final result = await _repository.updateWorkDay(day);
     result.fold(
@@ -227,5 +242,12 @@ abstract class _WorkStoreBase with Store {
       (_) async => await getWorkDays(),
     );
     setLoading(false);
+  }
+
+  bool hasConflict(WorkDay day) {
+    for (final workday in workDays) {
+      if (day.hasConflictWith(workday)) return true;
+    }
+    return false;
   }
 }

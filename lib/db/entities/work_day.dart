@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:work_timer/utils/extensions.dart';
@@ -10,7 +11,7 @@ import 'time.dart';
     ForeignKey(childColumns: ['month_id'], parentColumns: ['id'], entity: Month)
   ],
 )
-class WorkDay {
+class WorkDay extends Equatable {
   @PrimaryKey(autoGenerate: true)
   final int? id;
   final DateTime date;
@@ -31,6 +32,7 @@ class WorkDay {
   });
 
   WorkDay copyWith({
+    int? id,
     DateTime? date,
     Time? arrival,
     Time? exit,
@@ -38,7 +40,7 @@ class WorkDay {
     int? monthId,
   }) {
     return WorkDay(
-      id: id,
+      id: id ?? this.id,
       date: date ?? this.date,
       arrival: arrival ?? this.arrival,
       exit: exit ?? this.exit,
@@ -49,12 +51,22 @@ class WorkDay {
 
   @override
   String toString() => 'WorkDay(id: $id, date: $date, arrival: $arrival, exit: $exit, type: $type, monthId: $monthId)';
+
+  @override
+  List<Object?> get props => [id, date, arrival, exit, type, monthId];
 }
 
 extension WorkDayExtensions on WorkDay {
   bool hasConflictWith(WorkDay other) {
     return date.compareTo(other.date) == 0 &&
-        (other.arrival.isBetween(arrival, exit) || other.exit.isBetween(arrival, exit)) &&
+            (other.arrival.isBetween(arrival, exit) || other.exit.isBetween(arrival, exit)) ||
+        (arrival.isBetween(other.arrival, other.exit) || exit.isBetween(other.arrival, other.exit));
+  }
+
+  bool isEqualTo(WorkDay other) {
+    return date.compareTo(other.date) == 0 &&
+        arrival.toMinutes == other.arrival.toMinutes &&
+        exit.toMinutes == other.exit.toMinutes &&
         type == other.type;
   }
 }

@@ -1,7 +1,8 @@
+import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
 
 @entity
-class Month {
+class Month extends Equatable {
   @PrimaryKey(autoGenerate: true)
   final int? id;
   final String name;
@@ -23,4 +24,7 @@ class Month {
 
   @override
   String toString() => 'Month(id: $id, name: $name, dutyHours: $dutyHours, absenceHours: $absenceHours)';
+
+  @override
+  List<Object?> get props => [name, dutyHours, absenceHours];
 }

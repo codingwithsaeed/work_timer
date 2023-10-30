@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:work_timer/locale_notifier.dart';
+import 'package:work_timer/utils/x_widgets/x_text_button.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/extensions.dart';
 import '../../utils/dimens.dart';
@@ -45,7 +47,7 @@ class MonthListScreen extends StatelessWidget {
                 ? Center(child: Text(context.l10n.noMonth))
                 : Observer(builder: (_) {
                     return ListView.separated(
-                      separatorBuilder: (context, index) => const SizedBox(height: Dimens.sPadding),
+                      separatorBuilder: (_, __) => const SizedBox(height: Dimens.sPadding),
                       padding: const EdgeInsets.all(Dimens.sPadding),
                       itemBuilder: (_, index) {
                         final month = store.months[index];
@@ -55,7 +57,30 @@ class MonthListScreen extends StatelessWidget {
                             store.setCurrentMonth(month);
                             context.pushNamed(Routes.monthDays);
                           },
-                          onDelete: () => store.deleteMonth(month),
+                          onDelete: () async {
+                            final result = await DialogUtils.showXBottomSheet<bool?>(
+                              context,
+                              title: context.l10n.deleteMonth,
+                              content: context.l10n.doYouWantToDelete(month.name),
+                              cancelActionText: context.l10n.cancel,
+                              actions: [
+                                XTextButton(
+                                  text: context.l10n.delete,
+                                  color: context.errorColor,
+                                  textColor: context.onErrorColor,
+                                  onTap: () => context.pop(true),
+                                ),
+                              ],
+                            );
+                            if (result != null && result) store.deleteMonth(month);
+                          },
+                          onEdit: () async {
+                            final result = await DialogUtils.showXModalBottomSheetPage<Month?>(
+                              context,
+                              content: CreateMonthDialog(month: month),
+                            );
+                            if (result != null) store.updateMonth(result.copyWith(id: month.id));
+                          },
                         );
                       },
                       itemCount: store.months.length,
@@ -69,9 +94,10 @@ class MonthListScreen extends StatelessWidget {
 class MonthItem extends StatelessWidget {
   final Month month;
   final VoidCallback? onTap;
+  final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  const MonthItem({Key? key, required this.month, this.onTap, this.onDelete}) : super(key: key);
+  const MonthItem({Key? key, required this.month, this.onTap, this.onDelete, this.onEdit}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +108,20 @@ class MonthItem extends StatelessWidget {
       contentPadding: const EdgeInsetsDirectional.only(start: Dimens.mPadding),
       tileColor: context.primaryContainerColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Dimens.sPadding),
+        borderRadius: BorderRadius.circular(Dimens.mPadding),
         side: BorderSide(color: context.outlineColor),
       ),
       title: XText(month.name, style: context.titleMedium),
       subtitle: XText(context.l10n.dutyHoursOf(month.dutyHours.toString())),
       leading: Icon(Icons.calendar_month_rounded, color: context.outlineColor),
-      trailing: IconButton(onPressed: onDelete, icon: Icon(Icons.delete, color: context.errorColor)),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(onPressed: onEdit, icon: Icon(Iconsax.edit_2, color: context.secondaryColor)),
+          IconButton(onPressed: onDelete, icon: Icon(Iconsax.trash, color: context.errorColor)),
+        ],
+      ),
     );
   }
 }
