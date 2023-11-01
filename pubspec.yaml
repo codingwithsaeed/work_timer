@@ -27,7 +27,7 @@ dependencies:
   iconsax: ^0.0.8
   persian_datetime_picker: ^2.6.0
   percent_indicator: ^4.2.3
-  intl: ^0.18.1
+  intl: ^0.18.0
   toastification: ^1.0.2
   gap: ^3.0.1
 

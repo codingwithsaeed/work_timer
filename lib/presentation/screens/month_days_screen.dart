@@ -188,7 +188,7 @@ class WorkDayItem extends StatelessWidget {
       dense: true,
       visualDensity: VisualDensity.compact,
       contentPadding: const EdgeInsetsDirectional.only(start: Dimens.mPadding),
-      tileColor: workDay.type.color.withOpacity(0.1),
+      tileColor: workDay.type.color.withOpacity(0.05),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.sPadding),
         side: BorderSide(color: workDay.type.color.withOpacity(0.2)),
@@ -199,19 +199,26 @@ class WorkDayItem extends StatelessWidget {
           XText(
             Jalali.fromDateTime(workDay.date).weekDay.weekday(context),
             style: context.titleMedium,
-          ),
+            align: TextAlign.start,
+          ).expand(),
           const Gap(Dimens.sPadding),
           XText(
             Jalali.fromDateTime(workDay.date).myFormat,
             style: context.titleMedium,
             direction: TextDirection.ltr,
-          ),
+            align: TextAlign.end,
+          ).expand(flex: 2),
         ],
       ),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          XText(workDay.type.text(context), color: workDay.type.color.withOpacity(0.8), style: context.bodySmall),
+          XText(
+            workDay.type.text(context),
+            color: workDay.type.color.withOpacity(0.8),
+            style: context.bodySmall,
+            align: TextAlign.center,
+          ).expand(),
           const Gap(Dimens.sPadding),
           XText(context.l10n.from, style: context.bodySmall),
           const Gap(Dimens.xsPadding),
@@ -229,7 +236,7 @@ class WorkDayItem extends StatelessWidget {
             style: context.bodySmall,
             align: TextAlign.center,
           ).expand(),
-          context.isFarsi ? const Spacer() : const SizedBox()
+          //context.isFarsi ? const Spacer() : const SizedBox()
         ],
       ),
       leading: Icon(Iconsax.clock, color: workDay.type.color.withOpacity(0.4)),

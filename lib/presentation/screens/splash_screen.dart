@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:work_timer/main.dart';
 import 'package:work_timer/utils/app_theme.dart';
 import '../../utils/extensions.dart';
 import '../../utils/dimens.dart';
@@ -14,7 +15,11 @@ class SplashScreen extends StatelessWidget {
     changeStatusBarColor(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 1), () {
-        context.pushReplacementNamed(Routes.monthList);
+        if (context.mounted) {
+          context.pushReplacementNamed(Routes.monthList);
+        } else {
+          navKey.currentContext!.pushReplacementNamed(Routes.monthList);
+        }
       });
     });
     return Scaffold(
