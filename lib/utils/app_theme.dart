@@ -35,8 +35,8 @@ ThemeData getTheme(BuildContext context, ThemeScheme theme, {bool isRtl = false}
         foregroundColor: scheme?.onPrimary,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(Dimens.mPadding),
-          bottomLeft: Radius.circular(Dimens.mPadding),
+          bottomRight: Radius.circular(Dimens.sPadding),
+          bottomLeft: Radius.circular(Dimens.sPadding),
         )),
         titleTextStyle: titleLarge.copyWith(
           color: scheme?.onPrimary,
@@ -56,6 +56,7 @@ ThemeData getTheme(BuildContext context, ThemeScheme theme, {bool isRtl = false}
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: scheme?.primary,
         foregroundColor: scheme?.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimens.sPadding)),
       ));
 }
 

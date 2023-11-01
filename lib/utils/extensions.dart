@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mobx/mobx.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:toastification/toastification.dart';
+import 'package:work_timer/db/entities/time.dart';
+import 'package:work_timer/presentation/stores/error_store.dart';
 import 'dimens.dart';
 
 extension FormatedDate on DateTime {
@@ -38,7 +43,7 @@ extension GeneralExtensions on BuildContext {
   bool get isRtl => _textDirection == TextDirection.rtl.name.toLowerCase();
   bool get isLtr => _textDirection == TextDirection.ltr.name.toLowerCase();
 
-  void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
+  void clearFocus() => FocusManager.instance.primaryFocus?.unfocus();
   AppLocalizations get l10n => AppLocalizations.of(this)!;
   Locale get local => Localizations.localeOf(this);
   bool get isFarsi => local == const Locale('fa');
@@ -138,4 +143,80 @@ extension WidgetExtensions on Widget {
         ),
         child: this,
       );
+  Widget marginDirectionalOnly({double? start, double? top, double? end, double? bottom}) => Padding(
+        padding: EdgeInsetsDirectional.only(
+          start: start ?? Dimens.zero,
+          top: top ?? Dimens.zero,
+          end: end ?? Dimens.zero,
+          bottom: bottom ?? Dimens.zero,
+        ),
+        child: this,
+      );
+}
+
+extension ShowToast on BuildContext {
+  ReactionDisposer? setupErrorReaction(ErrorStore store) {
+    if (mounted) {
+      return reaction(
+        (_) => store.error,
+        (error) {
+          if (error.isNotEmpty) {
+            if (mounted) {
+              toastification.show(
+                context: this,
+                title: error,
+                type: ToastificationType.error,
+                autoCloseDuration: const Duration(seconds: 4),
+                style: ToastificationStyle.fillColored,
+                onAutoCompleteCompleted: () => store.clear(),
+                onCloseTap: () => store.clear(),
+              );
+            }
+          }
+        },
+      );
+    }
+    return null;
+  }
+}
+
+extension JalaliUtils on Jalali {
+  String get myFormat {
+    final f = formatter;
+    return '${f.yyyy} - ${f.mm} - ${f.dd}';
+  }
+}
+
+extension TimeOfDayToTime on TimeOfDay {
+  Time get time => Time(hour: hour.toString(), minute: minute.toString()).padLeft();
+}
+
+extension GetWeekDays on int {
+  String weekday(BuildContext context) => context.isFarsi ? _weekDayFa : _weekDayEn;
+
+  String get _weekDayFa {
+    return switch (this) {
+      1 => 'شنبه',
+      2 => 'یکشنبه',
+      3 => 'دوشنبه',
+      4 => 'سه شنبه',
+      5 => 'چهارشنبه',
+      6 => 'پنجشنبه',
+      7 => 'جمعه',
+      _ => 'نامشخص'
+    };
+  }
+
+  String get _weekDayEn {
+    return switch (this) {
+      1 => 'Saturday',
+      2 => 'Sunday',
+      3 => 'Monday',
+      4 => 'Tuesday',
+      5 => 'Wednesday',
+      6 => 'Thursday',
+      7 => 'Friday',
+      _ => 'Unknown'
+    };
+  }
 }

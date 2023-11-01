@@ -17,7 +17,22 @@ class WorkStore = _WorkStoreBase with _$WorkStore;
 abstract class _WorkStoreBase with Store {
   final WorkRepository _repository;
   final ErrorStore errorStore;
-  _WorkStoreBase(this._repository, this.errorStore);
+  final List<ReactionDisposer> _disposers = [];
+
+  _WorkStoreBase(this._repository, this.errorStore) {
+    final undoSuccessMonth = reaction(
+      (_) => upsertSuccess,
+      (success) => success ? setUpsertSuccess(false) : null,
+      delay: 200,
+    );
+    _disposers.add(undoSuccessMonth);
+  }
+
+  void dispose() {
+    for (final disposer in _disposers) {
+      disposer();
+    }
+  }
 
   @observable
   bool isLoading = false;
@@ -71,9 +86,7 @@ abstract class _WorkStoreBase with Store {
   }
 
   @computed
-  Time get absenceTime {
-    return currentMonth!.absenceHours.time.padLeft();
-  }
+  Time get absenceTime => currentMonth!.absenceHours.time.padLeft();
 
   @computed
   Time get sumOfUsedAbsenceTime {
@@ -139,9 +152,7 @@ abstract class _WorkStoreBase with Store {
   }
 
   @computed
-  Time get dutyHours {
-    return currentMonth!.dutyHours.time.padLeft();
-  }
+  Time get dutyHours => currentMonth!.dutyHours.time.padLeft();
 
   @computed
   Color get progressColor {
@@ -160,24 +171,33 @@ abstract class _WorkStoreBase with Store {
     setLoading(false);
   }
 
-  Future<void> insertMonth(Month month) async {
-    setLoading(true);
-    final result = await _repository.insertMonth(month);
-    result.fold(
-      (failure) => errorStore.setError(failure.error),
-      (_) async => await getMonths(),
-    );
-    setLoading(false);
+  @observable
+  bool upsertSuccess = false;
+  @action
+  void setUpsertSuccess(bool upsertSuccess) => this.upsertSuccess = upsertSuccess;
+
+  bool isMonthExist(Month month) {
+    for (final item in months) {
+      if (item.name == month.name && item.id != month.id) return true;
+    }
+    return false;
   }
 
-  Future<void> updateMonth(Month month) async {
+  Future<void> upsertMonth(Month month) async {
+    if (isMonthExist(month)) {
+      errorStore.setError(navKey.currentContext!.l10n.monthWithThisNameIsExist);
+      return;
+    }
     setLoading(true);
-    final result = await _repository.updateMonth(month);
+    final result = await _repository.upsertMonth(month);
+    setLoading(false);
     result.fold(
       (failure) => errorStore.setError(failure.error),
-      (_) async => await getMonths(),
+      (_) async {
+        await getMonths();
+        setUpsertSuccess(true);
+      },
     );
-    setLoading(false);
   }
 
   Future<void> deleteMonth(Month month) async {
@@ -201,35 +221,19 @@ abstract class _WorkStoreBase with Store {
     setLoading(false);
   }
 
-  Future<String?> insertWorkDay(WorkDay day) async {
-    if (hasConflict(day)) {
-      return navKey.currentContext!.l10n.dayHasConflict;
-    }
-    setLoading(true);
-    final result = await _repository.insertWorkDay(day);
-    setLoading(false);
-    return result.fold(
-      (failure) {
-        errorStore.setError(failure.error);
-        return failure.error;
-      },
-      (_) async {
-        await getWorkDays();
-        return null;
-      },
-    );
-  }
-
-  Future<void> updateWorkDay(WorkDay day) async {
-    if (hasConflict(day)) {
+  Future<void> upsertWorkDay(WorkDay day) async {
+    if (day.hasConflictIn(workDays)) {
       errorStore.setError(navKey.currentContext!.l10n.dayHasConflict);
       return;
     }
     setLoading(true);
-    final result = await _repository.updateWorkDay(day);
+    final result = await _repository.upsertWorkDay(day);
     result.fold(
       (failure) => errorStore.setError(failure.error),
-      (_) async => await getWorkDays(),
+      (_) async {
+        await getWorkDays();
+        setUpsertSuccess(true);
+      },
     );
     setLoading(false);
   }
@@ -242,12 +246,5 @@ abstract class _WorkStoreBase with Store {
       (_) async => await getWorkDays(),
     );
     setLoading(false);
-  }
-
-  bool hasConflict(WorkDay day) {
-    for (final workday in workDays) {
-      if (day.hasConflictWith(workday)) return true;
-    }
-    return false;
   }
 }

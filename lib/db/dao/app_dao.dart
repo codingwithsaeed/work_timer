@@ -9,16 +9,16 @@ abstract class AppDao {
   @insert
   Future<int?> insertMonth(Month month);
   @update
-  Future<void> updateMonth(Month month);
+  Future<int?> updateMonth(Month month);
   @delete
-  Future<void> deleteMonth(Month month);
+  Future<int?> deleteMonth(Month month);
 
   @Query('SELECT * FROM work_day WHERE month_id = :monthId')
   Future<List<WorkDay>> getDays(int monthId);
   @insert
   Future<int?> insertDay(WorkDay day);
   @update
-  Future<void> updateDay(WorkDay day);
+  Future<int?> updateDay(WorkDay day);
   @delete
-  Future<void> deleteDay(WorkDay day);
+  Future<int?> deleteDay(WorkDay day);
 }

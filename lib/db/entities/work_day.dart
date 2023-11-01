@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:work_timer/utils/extensions.dart';
@@ -11,7 +10,7 @@ import 'time.dart';
     ForeignKey(childColumns: ['month_id'], parentColumns: ['id'], entity: Month)
   ],
 )
-class WorkDay extends Equatable {
+class WorkDay {
   @PrimaryKey(autoGenerate: true)
   final int? id;
   final DateTime date;
@@ -51,16 +50,21 @@ class WorkDay extends Equatable {
 
   @override
   String toString() => 'WorkDay(id: $id, date: $date, arrival: $arrival, exit: $exit, type: $type, monthId: $monthId)';
-
-  @override
-  List<Object?> get props => [id, date, arrival, exit, type, monthId];
 }
 
 extension WorkDayExtensions on WorkDay {
-  bool hasConflictWith(WorkDay other) {
+  bool _hasConflictWith(WorkDay other) {
     return date.compareTo(other.date) == 0 &&
-            (other.arrival.isBetween(arrival, exit) || other.exit.isBetween(arrival, exit)) ||
-        (arrival.isBetween(other.arrival, other.exit) || exit.isBetween(other.arrival, other.exit));
+        ((other.arrival.isBetween(arrival, exit) || other.exit.isBetween(arrival, exit)) ||
+            (arrival.isBetween(other.arrival, other.exit) || exit.isBetween(other.arrival, other.exit))) &&
+        id != other.id;
+  }
+
+  bool hasConflictIn(List<WorkDay> workDays) {
+    for (final workDay in workDays) {
+      if (_hasConflictWith(workDay)) return true;
+    }
+    return false;
   }
 
   bool isEqualTo(WorkDay other) {
@@ -77,6 +81,8 @@ enum WorkDayType {
   remote,
   mission;
 
+  Color get color => workDayColors[this] ?? Colors.black;
+
   String text(BuildContext context) {
     return switch (this) {
       WorkDayType.presence => context.l10n.presence,
@@ -85,13 +91,11 @@ enum WorkDayType {
       WorkDayType.mission => context.l10n.mission,
     };
   }
-
-  Color get color {
-    return switch (this) {
-      WorkDayType.presence => Colors.green,
-      WorkDayType.absence => Colors.red,
-      WorkDayType.remote => Colors.blue,
-      WorkDayType.mission => Colors.orange,
-    };
-  }
 }
+
+final workDayColors = {
+  WorkDayType.presence: Colors.green,
+  WorkDayType.absence: Colors.red,
+  WorkDayType.remote: Colors.blue,
+  WorkDayType.mission: Colors.orange,
+};

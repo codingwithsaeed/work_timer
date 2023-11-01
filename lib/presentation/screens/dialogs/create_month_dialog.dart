@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:mobx/mobx.dart';
+import 'package:provider/provider.dart';
+import 'package:work_timer/presentation/stores/work_store.dart';
 import 'package:work_timer/utils/x_widgets/x_text.dart';
 import '../../../db/entities/month.dart';
 import '../../../utils/extensions.dart';
@@ -69,14 +73,21 @@ class _CreateMonthDialogState extends State<CreateMonthDialog> {
   late TextEditingController dutyHoursController;
   late TextEditingController absenceHoursController;
   late CreateMonthStore store;
+  late WorkStore workStore;
+  late ReactionDisposer successDisposer;
 
   @override
   void initState() {
     super.initState();
+    workStore = context.read<WorkStore>();
     monthNameController = TextEditingController(text: widget.month?.name ?? '');
     dutyHoursController = TextEditingController(text: widget.month?.dutyHours.toString() ?? '');
     absenceHoursController = TextEditingController(text: widget.month?.absenceHours.toString() ?? '20');
     store = CreateMonthStore()..init(widget.month);
+    successDisposer = reaction(
+      (_) => workStore.upsertSuccess,
+      (success) => success ? context.pop() : () {},
+    );
   }
 
   @override
@@ -84,6 +95,7 @@ class _CreateMonthDialogState extends State<CreateMonthDialog> {
     monthNameController.dispose();
     dutyHoursController.dispose();
     absenceHoursController.dispose();
+    successDisposer();
     super.dispose();
   }
 
@@ -92,47 +104,59 @@ class _CreateMonthDialogState extends State<CreateMonthDialog> {
     return Column(
       children: [
         XText(widget.month == null ? context.l10n.createMonth : context.l10n.editMonth, style: context.titleLarge),
-        const SizedBox(height: Dimens.mPadding),
+        Gap(Dimens.mPadding.h),
         XTextField(
           label: context.l10n.monthName,
           inputAction: TextInputAction.next,
           controller: monthNameController,
           onChanged: (name) => store.setName(name),
         ),
-        const SizedBox(height: Dimens.mPadding),
+        Gap(Dimens.mPadding.h),
         XTextField(
           label: context.l10n.dutyHours,
+          inputType: TextInputType.number,
           inputAction: TextInputAction.done,
           controller: dutyHoursController,
           onChanged: (dutyHours) => store.setDutyHours(dutyHours),
         ),
-        const SizedBox(height: Dimens.mPadding),
+        Gap(Dimens.mPadding.h),
         XTextField(
           label: context.l10n.allowAbsenceHours,
           inputAction: TextInputAction.done,
           controller: absenceHoursController,
           onChanged: (absenceHours) => store.setAbsenceHours(absenceHours),
         ),
-        const SizedBox(height: Dimens.sPadding),
+        Gap(Dimens.sPadding.h),
         Observer(builder: (_) {
           return Visibility(
             visible: widget.month != null,
             child: XTextButton(
-              onTap: store.canEdit ? () => context.pop(store.month) : null,
+              onTap: store.canEdit && !workStore.errorStore.hasError
+                  ? () {
+                      context.clearFocus();
+                      workStore.upsertMonth(store.month!.copyWith(id: widget.month!.id));
+                    }
+                  : null,
               text: context.l10n.save,
             ),
           );
         }),
-        Observer(builder: (_) {
-          return Visibility(
-            visible: widget.month == null,
-            child: XTextButton(
-              onTap: store.isValid ? () => context.pop(store.month) : null,
+        Visibility(
+          visible: widget.month == null,
+          child: Observer(builder: (_) {
+            return XTextButton(
+              isLoading: workStore.isLoading,
+              onTap: store.isValid && !workStore.errorStore.hasError
+                  ? () {
+                      context.clearFocus();
+                      workStore.upsertMonth(store.month!);
+                    }
+                  : null,
               text: context.l10n.save,
-            ),
-          );
-        }),
-        const SizedBox(height: Dimens.sPadding),
+            );
+          }),
+        ),
+        Gap(Dimens.sPadding.h),
         XTextButton(
           onTap: () => context.pop(),
           color: context.backgroundColor,

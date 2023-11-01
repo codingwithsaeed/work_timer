@@ -14,7 +14,7 @@
     ".metadata": true,
     ".vscode": true,
     "**/.gitkeep": false,
-    "**/*.config.dart": true,
+    "**/*.config.dart": false,
     "**/*.freezed.dart": false,
     "**/*.g.dart": true,
     "pubspec.lock": true

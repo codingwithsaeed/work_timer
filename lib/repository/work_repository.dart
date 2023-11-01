@@ -7,13 +7,11 @@ import 'repo_handler.dart';
 
 abstract interface class WorkRepository {
   Result<List<Month>> getMonths();
-  Result<bool> insertMonth(Month month);
-  Result<void> updateMonth(Month month);
+  Result<void> upsertMonth(Month month);
   Result<void> deleteMonth(Month month);
 
   Result<List<WorkDay>> getWorkdays(int monthId);
-  Result<bool> insertWorkDay(WorkDay workDay);
-  Result<void> updateWorkDay(WorkDay workDay);
+  Result<void> upsertWorkDay(WorkDay workDay);
   Result<void> deleteWorkDay(WorkDay workDay);
 }
 
@@ -23,70 +21,40 @@ class WorkRepositoryImpl implements WorkRepository {
   final RepoHandler _handler;
   const WorkRepositoryImpl(this._dao, this._handler);
   @override
-  Result<List<Month>> getMonths() {
-    return _handler.handle(
-      onCall: () => _dao.getMonths(),
-      onSuccess: (result) => result,
-      onErrorMessage: 'Can\'t get months',
-    );
-  }
+  Result<List<Month>> getMonths() => _handler.handle(
+        onCall: () => _dao.getMonths(),
+        onSuccess: (result) => result,
+        onErrorMessage: 'Cant get months',
+      );
 
   @override
-  Result<bool> insertMonth(Month month) {
-    return _handler.handle(
-      onCall: () => _dao.insertMonth(month),
-      onSuccess: (result) => true,
-      onErrorMessage: 'Can\'t add month',
-    );
-  }
+  Result<void> upsertMonth(Month month) => _handler.handle(
+        onCall: () => month.id == null ? _dao.insertMonth(month) : _dao.updateMonth(month),
+        onErrorMessage: 'Cant add or update month',
+      );
 
   @override
-  Result<void> updateMonth(Month month) {
-    return _handler.handle(
-      onCall: () => _dao.updateMonth(month),
-      onSuccess: (result) {},
-    );
-  }
+  Result<void> deleteMonth(Month month) => _handler.handle(
+        onCall: () => _dao.deleteMonth(month),
+        onErrorMessage: 'Cant delete month',
+      );
 
   @override
-  Result<void> deleteMonth(Month month) {
-    return _handler.handle(
-      onCall: () => _dao.deleteMonth(month),
-      onSuccess: (result) {},
-    );
-  }
+  Result<List<WorkDay>> getWorkdays(int monthId) => _handler.handle(
+        onCall: () => _dao.getDays(monthId),
+        onSuccess: (result) => result,
+        onErrorMessage: 'Cant get workdays',
+      );
 
   @override
-  Result<List<WorkDay>> getWorkdays(int monthId) {
-    return _handler.handle(
-      onCall: () => _dao.getDays(monthId),
-      onSuccess: (result) => result,
-      onErrorMessage: 'Can\'t get workdays',
-    );
-  }
+  Result<void> upsertWorkDay(WorkDay workDay) => _handler.handle(
+        onCall: () => workDay.id == null ? _dao.insertDay(workDay) : _dao.updateDay(workDay),
+        onErrorMessage: 'Cant add or update workday',
+      );
 
   @override
-  Result<bool> insertWorkDay(WorkDay workDay) {
-    return _handler.handle(
-      onCall: () => _dao.insertDay(workDay),
-      onSuccess: (result) => true,
-      onErrorMessage: 'Can\'t add workday',
-    );
-  }
-
-  @override
-  Result<void> updateWorkDay(WorkDay workDay) {
-    return _handler.handle(
-      onCall: () => _dao.updateDay(workDay),
-      onSuccess: (result) {},
-    );
-  }
-
-  @override
-  Result<void> deleteWorkDay(WorkDay workDay) {
-    return _handler.handle(
-      onCall: () => _dao.deleteDay(workDay),
-      onSuccess: (result) {},
-    );
-  }
+  Result<void> deleteWorkDay(WorkDay workDay) => _handler.handle(
+        onCall: () => _dao.deleteDay(workDay),
+        onErrorMessage: 'Cant delete workday',
+      );
 }

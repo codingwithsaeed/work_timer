@@ -6,6 +6,7 @@ import 'package:work_timer/db/entities/work_day.dart';
 import 'package:work_timer/presentation/stores/work_store.dart';
 import 'package:work_timer/utils/dimens.dart';
 import 'package:work_timer/utils/extensions.dart';
+import 'package:work_timer/utils/i_app_bar.dart';
 import 'package:work_timer/utils/x_widgets/x_container.dart';
 import 'package:work_timer/utils/x_widgets/x_text.dart';
 
@@ -17,20 +18,13 @@ class MonthDetailsScreen extends StatelessWidget {
     final store = context.read<WorkStore>();
     return Observer(builder: (_) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(context.l10n.infoOf(store.currentMonth!.name)),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
-            onPressed: () => context.pop(),
-          ),
-        ),
+        appBar: IAppBar(title: context.l10n.infoOf(store.currentMonth!.name)),
         body: Column(
           children: [
             Observer(builder: (_) {
               return TileItem(
                 label: context.l10n.dutyHours,
                 value: store.dutyHours.toString(),
-                borderColor: context.outlineColor,
               );
             }),
             const SizedBox(height: Dimens.sPadding),
@@ -38,7 +32,6 @@ class MonthDetailsScreen extends StatelessWidget {
               return TileItem(
                 label: context.l10n.allowAbsenceHours,
                 value: store.absenceTime.toString(),
-                borderColor: context.outlineColor,
               );
             }),
             if (store.calculatedTime.isNotZero()) ...[
@@ -47,8 +40,7 @@ class MonthDetailsScreen extends StatelessWidget {
                 return TileItem(
                   label: context.l10n.sumOfCalculatedHours,
                   value: store.calculatedTime.toString(),
-                  valueColor: WorkDayType.presence.color,
-                  borderColor: WorkDayType.presence.color,
+                  color: WorkDayType.presence.color,
                 );
               }),
             ],
@@ -58,8 +50,7 @@ class MonthDetailsScreen extends StatelessWidget {
                 return TileItem(
                   label: context.l10n.sumOfRemainingHours,
                   value: store.remainingTime.toString(),
-                  valueColor: store.progressColor,
-                  borderColor: store.progressColor,
+                  color: store.progressColor,
                 );
               }),
             ],
@@ -69,8 +60,7 @@ class MonthDetailsScreen extends StatelessWidget {
                 return TileItem(
                   label: context.l10n.workedHours,
                   value: store.workHours.toString(),
-                  valueColor: WorkDayType.presence.color,
-                  borderColor: WorkDayType.presence.color,
+                  color: WorkDayType.presence.color,
                 );
               }),
             ],
@@ -80,8 +70,7 @@ class MonthDetailsScreen extends StatelessWidget {
                 return TileItem(
                   label: context.l10n.sumOfAbsenceHours,
                   value: store.sumOfUsedAbsenceTime.toString(),
-                  valueColor: WorkDayType.absence.color,
-                  borderColor: WorkDayType.absence.color,
+                  color: WorkDayType.absence.color,
                 );
               }),
             ],
@@ -91,8 +80,7 @@ class MonthDetailsScreen extends StatelessWidget {
                 return TileItem(
                   label: context.l10n.reminedAbsenceHours,
                   value: store.sumOfRemainingAbsenceTime.toString(),
-                  valueColor: WorkDayType.absence.color,
-                  borderColor: WorkDayType.absence.color,
+                  color: WorkDayType.absence.color,
                 );
               }),
             ],
@@ -102,8 +90,7 @@ class MonthDetailsScreen extends StatelessWidget {
                 return TileItem(
                   label: context.l10n.sumOfRemoteHours,
                   value: store.sumOfRemoteTime.toString(),
-                  valueColor: WorkDayType.remote.color,
-                  borderColor: WorkDayType.remote.color,
+                  color: WorkDayType.remote.color,
                 );
               }),
             ],
@@ -113,8 +100,7 @@ class MonthDetailsScreen extends StatelessWidget {
                 return TileItem(
                   label: context.l10n.sumOfMissionHours,
                   value: store.sumOfMissionTime.toString(),
-                  valueColor: WorkDayType.mission.color,
-                  borderColor: WorkDayType.mission.color,
+                  color: WorkDayType.mission.color,
                 );
               }),
             ],
@@ -126,22 +112,22 @@ class MonthDetailsScreen extends StatelessWidget {
 }
 
 class TileItem extends StatelessWidget {
-  const TileItem({super.key, required this.label, required this.value, this.valueColor, this.borderColor});
+  const TileItem({super.key, required this.label, required this.value, this.color});
   final String label;
   final String value;
-  final Color? borderColor;
-  final Color? valueColor;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return XContainer(
-      borderColor: borderColor,
-      color: borderColor?.withOpacity(0.2),
-      padding: const EdgeInsets.all(Dimens.sPadding),
+      borderColor: color?.withOpacity(0.2),
+      borderRadius: Dimens.sPadding,
+      color: color?.withOpacity(0.1) ?? context.primaryContainerColor,
+      padding: const EdgeInsets.all(Dimens.mPadding),
       child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         XText(label, style: context.titleMedium),
         const SizedBox(width: Dimens.sPadding),
-        XText(value, direction: TextDirection.ltr, color: valueColor, style: context.titleMedium),
+        XText(value, direction: TextDirection.ltr, color: color, style: context.titleMedium),
         const SizedBox(width: Dimens.sPadding),
         XText(context.l10n.hours, style: context.titleMedium)
       ]),

@@ -29,6 +29,7 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => getIt<LocaleNotifier>()),
       ],
       builder: (context, child) {
+        
         return ScreenUtilInit(
           designSize: const Size(360, 690),
           minTextAdapt: true,

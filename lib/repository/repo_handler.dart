@@ -7,7 +7,7 @@ import '../utils/typedefs.dart';
 abstract interface class RepoHandler {
   Result<T> handle<T, R>({
     required Future<R> Function() onCall,
-    required T Function(R) onSuccess,
+    T Function(R)? onSuccess,
     String onErrorMessage = '',
   });
 }
@@ -17,13 +17,13 @@ class RepoHandlerImpl implements RepoHandler {
   @override
   Result<T> handle<T, R>({
     required Future<R> Function() onCall,
-    required T Function(R) onSuccess,
+    T Function(R)? onSuccess,
     String onErrorMessage = '',
   }) async {
     try {
       final result = await onCall();
       if (result == null && onErrorMessage.isNotEmpty) return Left(DBFailure(onErrorMessage));
-      return Right(onSuccess(result));
+      return Right((onSuccess != null ? onSuccess(result) : (result) => result) as T);
     } on Exception catch (e) {
       return Left(DBFailure(e.toString()));
     }
