@@ -168,8 +168,10 @@ extension ShowToast on BuildContext {
                 type: ToastificationType.error,
                 autoCloseDuration: const Duration(seconds: 4),
                 style: ToastificationStyle.fillColored,
-                onAutoCompleteCompleted: () => store.clear(),
-                onCloseTap: () => store.clear(),
+                callbacks: ToastificationCallbacks(
+                  onCloseButtonTap: (_) => store.clear(),
+                  onAutoCompleteCompleted: (_) => store.clear(),
+                ),
               );
             }
           }

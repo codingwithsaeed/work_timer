@@ -40,14 +40,12 @@ class XContainer extends StatelessWidget {
         padding: padding ?? EdgeInsets.zero,
         decoration: decoration?.copyWith(
               color: color,
-              border:
-                  Border.all(color: borderColor ?? context.outlineColor, width: borderWidth ?? 1),
+              border: Border.all(color: borderColor ?? context.outlineColor, width: borderWidth ?? 1),
               borderRadius: borderRadius == null ? null : BorderRadius.circular(borderRadius!),
             ) ??
             BoxDecoration(
               color: color ?? context.backgroundColor,
-              border:
-                  Border.all(color: borderColor ?? context.outlineColor, width: borderWidth ?? 1),
+              border: Border.all(color: borderColor ?? context.outlineColor, width: borderWidth ?? 1),
               borderRadius: BorderRadius.circular(borderRadius ?? Dimens.sPadding),
             ),
         child: child,

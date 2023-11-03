@@ -60,13 +60,13 @@ ThemeData getTheme(BuildContext context, ThemeScheme theme, {bool isRtl = false}
       ));
 }
 
-enum ThemeScheme { teal, yellow, deepOrange, red, violet, blue }
+enum ThemeScheme { violet, blue, teal, yellow, deepOrange, red }
 
 final colorSchemeMap = {
   ThemeScheme.teal: createScheme(AppColors.teal),
-  ThemeScheme.yellow: createScheme(AppColors.amber, secondary: AppColors.deepOrange),
+  ThemeScheme.yellow: createScheme(AppColors.amber),
   ThemeScheme.deepOrange: createScheme(AppColors.deepOrange),
-  ThemeScheme.red: createScheme(AppColors.rufous, error: AppColors.amber),
+  ThemeScheme.red: createScheme(AppColors.rufous, error: AppColors.orange),
   ThemeScheme.violet: createScheme(AppColors.violet),
   ThemeScheme.blue: createScheme(AppColors.blue),
 };
@@ -74,7 +74,7 @@ final colorSchemeMap = {
 ColorScheme createScheme(Color primary, {Color? secondary, Color? error}) {
   return ColorScheme.light(
     primary: primary,
-    secondary: secondary ?? AppColors.amber,
+    secondary: secondary ?? AppColors.yellow,
     background: AppColors.background,
     primaryContainer: AppColors.white,
     error: error ?? AppColors.errorRed,

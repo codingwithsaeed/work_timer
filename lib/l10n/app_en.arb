@@ -47,5 +47,9 @@
   "from": "From",
   "to": "To",
   "settings": "Settings",
-  "about": "About"
+  "about": "About",
+  "language" : "Language",
+  "en" : "English",
+  "fa" : "Farsi",
+  "theme" : "Theme"
 }
