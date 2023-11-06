@@ -48,6 +48,7 @@ class XTextButton extends StatelessWidget {
       minWidth: width,
       height: height ?? 35.h,
       elevation: elevation,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       disabledColor: disableColor ?? context.primaryColor.withOpacity(0.5),
       shape: RoundedRectangleBorder(
         side: BorderSide(color: borderColor ?? Colors.transparent, width: 1),

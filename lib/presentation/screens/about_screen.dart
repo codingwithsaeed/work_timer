@@ -9,6 +9,11 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: IAppBar(title: context.l10n.about),
+      body: const Column(
+        children: [
+          
+        ]
+      ),
     );
   }
 }

@@ -45,52 +45,50 @@ class _MonthListScreenState extends State<MonthListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (_) {
-      return Scaffold(
-        appBar: IAppBar(
-          title: context.l10n.appName,
-          hasBack: false,
-          leading: IconButton(
-            onPressed: () => context.pushNamed(Routes.about),
-            icon: const Icon(Iconsax.info_circle4),
+    return Scaffold(
+      appBar: IAppBar(
+        title: context.l10n.appName,
+        hasBack: false,
+        leading: IconButton(
+          onPressed: () => context.pushNamed(Routes.about),
+          icon: const Icon(Iconsax.info_circle4),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Iconsax.setting),
+            onPressed: () => context.pushNamed(Routes.appSettings),
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showMonthUpsertDialog(),
+        child: const Icon(Icons.add),
+      ),
+      body: Observer(builder: (_) {
+        return ContentLoader(
+          isLoading: store.isLoading,
+          emptyText: context.l10n.noMonth,
+          data: store.months,
+          child: ListView.separated(
+            separatorBuilder: (_, __) => const SizedBox(height: Dimens.sPadding),
+            padding: EdgeInsets.fromLTRB(Dimens.sPadding, Dimens.sPadding, Dimens.sPadding, 68.h),
+            itemBuilder: (_, index) {
+              final month = store.months[index];
+              return MonthListItem(
+                month: month,
+                onTap: () {
+                  store.setCurrentMonth(month);
+                  context.pushNamed(Routes.monthDays);
+                },
+                onDelete: () => _showMonthDeleteDialog(month),
+                onEdit: () => _showMonthUpsertDialog(month),
+              );
+            },
+            itemCount: store.months.length,
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Iconsax.setting),
-              onPressed: () => context.pushNamed(Routes.appSettings),
-            )
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _showMonthUpsertDialog(),
-          child: const Icon(Icons.add),
-        ),
-        body: Observer(builder: (_) {
-          return ContentLoader(
-            isLoading: store.isLoading,
-            emptyText: context.l10n.noMonth,
-            data: store.months,
-            child: ListView.separated(
-              separatorBuilder: (_, __) => const SizedBox(height: Dimens.sPadding),
-              padding: EdgeInsets.fromLTRB(Dimens.sPadding, Dimens.sPadding, Dimens.sPadding, 68.h),
-              itemBuilder: (_, index) {
-                final month = store.months[index];
-                return MonthListItem(
-                  month: month,
-                  onTap: () {
-                    store.setCurrentMonth(month);
-                    context.pushNamed(Routes.monthDays);
-                  },
-                  onDelete: () => _showMonthDeleteDialog(month),
-                  onEdit: () => _showMonthUpsertDialog(month),
-                );
-              },
-              itemCount: store.months.length,
-            ),
-          );
-        }),
-      );
-    });
+        );
+      }),
+    );
   }
 
   void _showMonthUpsertDialog([Month? month]) =>
