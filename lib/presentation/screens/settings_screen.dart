@@ -38,7 +38,7 @@ class SettingsScreen extends StatelessWidget {
                 const SizedBox(height: Dimens.sPadding),
                 XContainer(
                   color: context.backgroundColor,
-                  padding: const EdgeInsets.symmetric(horizontal: Dimens.sPadding),
+                  padding: const EdgeInsets.all(Dimens.sPadding),
                   child: Row(
                     children: AppLocales.values
                         .map(
@@ -89,7 +89,11 @@ class SettingsScreen extends StatelessWidget {
                       return Observer(builder: (_) {
                         return XContainer(
                           borderColor: Colors.transparent,
-                          onTap: () => store.setTheme(item),
+                          onTap: () async {
+                            store.setTheme(item);
+                            await Future.delayed(const Duration(milliseconds: 100));
+                            if (context.mounted) changeStatusBarColor(context);
+                          },
                           color: getTheme(context, item).colorScheme.primary,
                           child: store.scheme == item
                               ? SizedBox(
