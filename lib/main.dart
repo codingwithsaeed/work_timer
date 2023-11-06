@@ -34,6 +34,7 @@ class MainApp extends StatelessWidget {
           designSize: const Size(360, 690),
           minTextAdapt: true,
           splitScreenMode: true,
+          ensureScreenSize: true,
           builder: (context, widget) {
             return Observer(builder: (_) {
               final appStore = context.watch<AppStore>();
