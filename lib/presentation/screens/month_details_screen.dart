@@ -48,7 +48,7 @@ class MonthDetailsScreen extends StatelessWidget {
               const SizedBox(height: Dimens.sPadding),
               Observer(builder: (_) {
                 return TileItem(
-                  label: context.l10n.sumOfRemainingHours,
+                  label: store.isOvertime ? context.l10n.overtimeDone : context.l10n.sumOfRemainingHours,
                   value: store.remainingTime.toString(),
                   color: store.progressColor,
                 );
