@@ -52,7 +52,10 @@ abstract class _WorkStoreBase with Store {
   void setWorkDays(List<WorkDay> workDays) => this.workDays = ObservableList.of(workDays);
 
   @computed
-  List<WorkDay> get sortedByDate => workDays.toList()..sort((a, b) => a.date.compareTo(b.date));
+  List<WorkDay> get sortedByDate {
+    final list = workDays.toList()..sort((a, b) => a.date.compareTo(b.date));
+    return list.reversed.toList();
+  }
 
   @observable
   Month? currentMonth;
