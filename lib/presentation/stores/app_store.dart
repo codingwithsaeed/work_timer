@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+// import 'package:pac/k';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:work_timer/repository/app_repository.dart';
 import 'package:work_timer/utils/app_theme.dart';
 import 'package:work_timer/utils/extensions.dart';
@@ -16,6 +18,7 @@ enum AppLocales {
       AppLocales.en => context.l10n.en,
     };
   }
+
   Locale get locale => Locale(name);
 }
 
@@ -26,10 +29,19 @@ abstract class _AppStoreBase with Store {
   final AppRepository _repository;
   _AppStoreBase(this._repository);
 
-  void init() {
+  void init() async {
     setLocale(_repository.getAppLocale());
     setTheme(_repository.getScheme());
+    setPackageInfo(await PackageInfo.fromPlatform());
   }
+
+  @observable
+  PackageInfo? packageInfo;
+  @action
+  void setPackageInfo(PackageInfo? packageInfo) => this.packageInfo = packageInfo;
+
+  @computed
+  String get version => packageInfo?.version ?? '';
 
   @observable
   AppLocales locale = AppLocales.fa;

@@ -48,8 +48,14 @@
   "to": "To",
   "settings": "Settings",
   "about": "About",
-  "language" : "Language",
-  "en" : "English",
-  "fa" : "Farsi",
-  "theme" : "Theme"
+  "language": "Language",
+  "en": "English",
+  "fa": "Farsi",
+  "theme": "Theme",
+  "appDesc": "Manage your time sheet.",
+  "contactWithSupport": "Contact with support",
+  "version": "Version",
+  "madeWith": "Made with",
+  "sayYourOpinion" : "Say your opinion here",
+  "bySaeed": "by Saeed Ahmadi" 
 }
