@@ -20,7 +20,7 @@ abstract class AppColors {
   static const green = Color(0xFF2E7D32);
   static const orange = Color(0xFFF57C00);
   static const yellow = Color.fromRGBO(249, 168, 37, 1);
-  static const violet = Color.fromARGB(255, 37, 5, 41);
+  static const violet = Color.fromRGBO(37, 5, 41, 1);
   static const rufous = Color(0xFFA52422);
   static const errorRed = Color.fromARGB(255, 199, 36, 36);
   static const lightTease = Color(0xFF3C7777);
