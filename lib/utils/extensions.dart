@@ -33,8 +33,7 @@ extension GeneralExtensions on BuildContext {
   bool get isPortrait => mediaQuery.orientation == Orientation.portrait;
   bool get isLandscape => mediaQuery.orientation == Orientation.landscape;
 
-  MediaQueryData withTextScale(double scale) => mediaQuery.copyWith(textScaleFactor: scale);
-  double getScaledWidth(double scale) => scale * width;
+  MediaQueryData withTextScale(double scale) => mediaQuery.copyWith(textScaler: const TextScaler.linear(1.0)); double getScaledWidth(double scale) => scale * width;
   double getScaledHeight(double scale) => scale * height;
   double getScaledSize(double scale) => scale * (isPortrait ? width : height);
 
@@ -164,7 +163,7 @@ extension ShowToast on BuildContext {
             if (mounted) {
               toastification.show(
                 context: this,
-                title: error,
+                title: Text(error),
                 type: ToastificationType.error,
                 autoCloseDuration: const Duration(seconds: 4),
                 style: ToastificationStyle.fillColored,
