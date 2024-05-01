@@ -91,7 +91,7 @@ abstract class _CreateDayStoreBase with Store {
 
 class CreateDayDialog extends StatefulWidget {
   final WorkDay? day;
-  const CreateDayDialog({Key? key, this.day}) : super(key: key);
+  const CreateDayDialog({super.key, this.day});
 
   @override
   State<CreateDayDialog> createState() => _CreateDayDialogState();
