@@ -4,7 +4,7 @@ import '../dimens.dart';
 
 class XList extends StatelessWidget {
   const XList({
-    Key? key,
+    super.key,
     required this.builder,
     required this.count,
     this.direction = Axis.vertical,
@@ -13,7 +13,7 @@ class XList extends StatelessWidget {
     this.padding,
     this.controller,
     this.separatorSize = Dimens.mPadding,
-  }) : super(key: key);
+  });
   final int count;
   final Axis direction;
   final Widget? separator;

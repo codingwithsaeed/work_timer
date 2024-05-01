@@ -9,5 +9,5 @@ sealed class Failure extends Equatable {
 }
 
 class DBFailure extends Failure {
-  const DBFailure(String error) : super(error);
+  const DBFailure(super.error);
 }

@@ -17,7 +17,7 @@ import '../stores/work_store.dart';
 import 'dialogs/create_month_dialog.dart';
 
 class MonthListScreen extends StatefulWidget {
-  const MonthListScreen({Key? key}) : super(key: key);
+  const MonthListScreen({super.key});
 
   @override
   State<MonthListScreen> createState() => _MonthListScreenState();

@@ -7,7 +7,7 @@ import 'x_container.dart';
 class XBackButton extends StatelessWidget {
   final VoidCallback? onTap;
   final IconData? icon;
-  const XBackButton({Key? key, this.onTap, this.icon}) : super(key: key);
+  const XBackButton({super.key, this.onTap, this.icon});
 
   @override
   Widget build(BuildContext context) {

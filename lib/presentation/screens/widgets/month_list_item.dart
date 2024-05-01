@@ -11,7 +11,7 @@ class MonthListItem extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  const MonthListItem({Key? key, required this.month, this.onTap, this.onDelete, this.onEdit}) : super(key: key);
+  const MonthListItem({super.key, required this.month, this.onTap, this.onDelete, this.onEdit});
 
   @override
   Widget build(BuildContext context) {

@@ -184,8 +184,8 @@ abstract final class DialogUtils {
     Jalali? picked = await showPersianDatePicker(
       context: context,
       initialDate: Jalali.now(),
-      firstDate: Jalali(1402, 4),
-      lastDate: Jalali(1402, 12),
+      firstDate: Jalali(1403, 1),
+      lastDate: Jalali(1404, 12),
     );
 
     if (picked != null) return picked.toDateTime();

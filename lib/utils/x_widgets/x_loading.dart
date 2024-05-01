@@ -5,10 +5,10 @@ class XLoading extends StatelessWidget {
   final Color? color;
   final double strokeWidth;
   const XLoading({
-    Key? key,
+    super.key,
     this.color,
     this.strokeWidth = 1.5,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

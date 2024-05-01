@@ -27,7 +27,7 @@ class XTextField extends StatelessWidget {
   final TextStyle? suffixStyle;
 
   const XTextField({
-    Key? key,
+    super.key,
     required this.label,
     this.icon,
     this.onChanged,
@@ -50,7 +50,7 @@ class XTextField extends StatelessWidget {
     this.direction,
     this.prefixStyle,
     this.suffixStyle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

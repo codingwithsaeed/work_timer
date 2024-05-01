@@ -11,13 +11,13 @@ class XListLoader extends StatelessWidget {
   final Widget list;
 
   const XListLoader({
-    Key? key,
+    super.key,
     required this.isLoading,
     required this.isEmpty,
     required this.emptyTitle,
     required this.list,
     this.loadingColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

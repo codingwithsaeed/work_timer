@@ -21,7 +21,7 @@ import '../../utils/dimens.dart';
 import '../stores/work_store.dart';
 
 class MonthDaysScreen extends StatefulWidget {
-  const MonthDaysScreen({Key? key}) : super(key: key);
+  const MonthDaysScreen({super.key});
 
   @override
   State<MonthDaysScreen> createState() => _MonthDaysScreenState();
@@ -180,7 +180,7 @@ class WorkDayItem extends StatelessWidget {
   final WorkDay workDay;
   final VoidCallback? onDelete;
   final VoidCallback? onEdit;
-  const WorkDayItem({Key? key, required this.workDay, this.onDelete, this.onEdit}) : super(key: key);
+  const WorkDayItem({super.key, required this.workDay, this.onDelete, this.onEdit});
 
   @override
   Widget build(BuildContext context) {

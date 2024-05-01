@@ -1,10 +1,10 @@
 name: work_timer
 description: A new Flutter project.
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: '>=3.3.4 <4.0.0'
 
 dependencies:
   flutter:
@@ -12,36 +12,39 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   floor: ^1.4.2
-  shamsi_date: ^1.0.1
-  mobx: ^2.2.0
-  flutter_mobx: ^2.0.6+5
-  get_it: ^7.6.0
-  injectable: ^2.1.2
-  sqflite: ^2.2.8+4
-  shared_preferences: ^2.2.2
+  shamsi_date: ^1.0.2
+  mobx: ^2.3.3
+  flutter_mobx: ^2.2.1
+  get_it: ^7.7.0
+  injectable: ^2.4.1
+  sqflite: ^2.3.3
+  shared_preferences: ^2.2.3
   dartz: ^0.10.1
   equatable: ^2.0.5
-  provider: ^6.0.5
-  flutter_screenutil: ^5.8.4
-  page_transition: ^2.0.9
+  provider: ^6.1.2
+  flutter_screenutil: ^5.9.0
+  page_transition: ^2.1.0
   iconsax: ^0.0.8
   persian_datetime_picker: ^2.6.0
   percent_indicator: ^4.2.3
-  intl: ^0.18.0
-  toastification: ^1.1.0
+  intl: ^0.18.1
+  toastification: ^1.2.1
   gap: ^3.0.1
-  package_info_plus: ^4.2.0
-  url_launcher: ^6.2.1
+  package_info_plus: ^8.0.0
+  url_launcher: ^6.2.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.2
   floor_generator: ^1.4.2
-  build_runner: ^2.4.5
-  mobx_codegen: ^2.3.0
-  injectable_generator: ^2.1.6
+  build_runner: ^2.4.9
+  mobx_codegen: ^2.6.1
+  injectable_generator: ^2.6.1
   flutter_launcher_icons: ^0.13.1
+
+dependency_overrides:
+  analyzer: ^6.4.1
 
 flutter_launcher_icons:
   android: "launcher_icon"

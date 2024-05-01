@@ -7,11 +7,11 @@ class XLoader extends StatelessWidget {
   final Color? loadingColor;
   final Widget child;
   const XLoader({
-    Key? key,
+    super.key,
     this.isLoading = false,
     this.loadingColor,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

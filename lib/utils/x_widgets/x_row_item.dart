@@ -7,7 +7,7 @@ import 'x_text.dart';
 
 class XRowItem extends StatelessWidget {
   const XRowItem({
-    Key? key,
+    super.key,
     required this.text,
     this.icon,
     this.value,
@@ -19,7 +19,7 @@ class XRowItem extends StatelessWidget {
     this.valueStyle,
     this.padding,
     this.margin,
-  }) : super(key: key);
+  });
   final String text;
   final String? value;
   final IconData? icon;

@@ -62,7 +62,7 @@ abstract class _CreateMonthStoreBase with Store {
 
 class CreateMonthDialog extends StatefulWidget {
   final Month? month;
-  const CreateMonthDialog({Key? key, this.month}) : super(key: key);
+  const CreateMonthDialog({super.key, this.month});
 
   @override
   State<CreateMonthDialog> createState() => _CreateMonthDialogState();

@@ -24,35 +24,35 @@ class SplashScreen extends StatelessWidget {
     });
     return Scaffold(
       backgroundColor: context.primaryColor,
-      body: Stack(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(Dimens.sPadding),
-                color: context.primaryContainerColor,
-                child: XText(
-                  context.l10n.appName,
-                  color: context.primaryColor,
-                  style: context.titleLarge.copyWith(fontWeight: FontWeight.w900),
-                  size: 35.sp,
-                  align: TextAlign.center,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(Dimens.sPadding),
+                  color: context.primaryContainerColor,
+                  child: XText(
+                    context.l10n.appName,
+                    color: context.primaryColor,
+                    style: context.titleLarge.copyWith(fontWeight: FontWeight.w900),
+                    size: 35.sp,
+                    align: TextAlign.center,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(Dimens.mPadding),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: CircularProgressIndicator(
-                color: context.onPrimaryColor,
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(Dimens.xlPadding),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: CircularProgressIndicator(color: context.onPrimaryColor),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

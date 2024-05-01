@@ -10,8 +10,7 @@ class XText extends StatelessWidget {
   final TextStyle? style;
   final TextDirection? direction;
   final EdgeInsetsGeometry? margin;
-  const XText(this.title, {Key? key, this.direction, this.color, this.size, this.align, this.style, this.margin})
-      : super(key: key);
+  const XText(this.title, {super.key, this.direction, this.color, this.size, this.align, this.style, this.margin});
 
   @override
   Widget build(BuildContext context) {

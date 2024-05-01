@@ -23,7 +23,7 @@ class XTextButton extends StatelessWidget {
   final TextDirection? textDirection;
 
   const XTextButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onTap,
     this.color,
@@ -39,7 +39,7 @@ class XTextButton extends StatelessWidget {
     this.textStyle,
     this.loadingColor,
     this.textDirection,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

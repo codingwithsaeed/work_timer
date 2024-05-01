@@ -15,7 +15,7 @@ class XContainer extends StatelessWidget {
   final double? height;
   final BoxDecoration? decoration;
   const XContainer({
-    Key? key,
+    super.key,
     this.child,
     this.color,
     this.borderColor,
@@ -27,7 +27,7 @@ class XContainer extends StatelessWidget {
     this.width,
     this.height,
     this.decoration,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

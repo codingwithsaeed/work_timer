@@ -11,12 +11,12 @@ class XValuePicker<T> extends StatelessWidget {
   final void Function(T) onChange;
 
   const XValuePicker({
-    Key? key,
+    super.key,
     required this.onChange,
     required this.values,
     this.currentValue,
     this.loop = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
